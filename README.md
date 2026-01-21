@@ -33,7 +33,7 @@
 1. Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/analtools/zerocrat.git
 cd zerocrat
 ```
 
@@ -53,4 +53,4 @@ The project is under active development and may change as new metrics, integrati
 
 ## License
 
-MIT License
+[MIT License](https://github.com/analtools/zerocrat/blob/main/LICENSE)
