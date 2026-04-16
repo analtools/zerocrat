@@ -1,0 +1,6 @@
+.github
+.idea
+.husky
+packages/*/src
+.prettierignore
+vitest.config.mts
