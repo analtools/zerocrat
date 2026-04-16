@@ -1,0 +1,14 @@
+{
+  "name": "@analtools/zerocrat-source-jira",
+  "version": "0.0.0-stub",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
+  "main": "./dist/index.js",
+  "dependencies": {
+    "@analtools/zerocrat-source-utils": "0.0.0-stub"
+  },
+  "scripts": {
+    "build": "rimraf dist && tsc"
+  }
+}
