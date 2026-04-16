@@ -1,0 +1,19 @@
+{
+  "name": "@analtools/zerocrat-source-utils",
+  "version": "0.0.0-stub",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
+  "main": "./dist/index.js",
+  "dependencies": {
+    "bottleneck": "^2.19.5",
+    "qs": "^6.15.0",
+    "undici": "^7.24.6"
+  },
+  "devDependencies": {
+    "@types/qs": "^6.15.0"
+  },
+  "scripts": {
+    "build": "rimraf dist && tsc"
+  }
+}
