@@ -15,7 +15,7 @@ export async function smartSearch(
     queries.push(`updated <= ${formatDate(options.toDate)}`);
   }
 
-  if(options.project) {
+  if (options.project) {
     queries.push(`project = "${options.project}"`);
   }
   if (options.projects && options.projects.length > 0) {

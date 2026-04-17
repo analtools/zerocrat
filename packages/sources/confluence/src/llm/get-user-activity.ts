@@ -1,4 +1,3 @@
-
 import * as api from "../api";
 import type { ConfluenceApiContext } from "../types";
 import { getFileCategory } from "../utils";

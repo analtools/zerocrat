@@ -35,7 +35,7 @@ describe("Jira E2E", () => {
   });
 
   it("api.getEpicField", async () => {
-    const field = await client.api.getEpicField()
+    const field = await client.api.getEpicField();
     console.log(field);
-  })
+  });
 });

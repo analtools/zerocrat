@@ -9,9 +9,9 @@ import type {
 export async function search(
   { confluenceHost, confluenceToken }: ConfluenceApiContext,
   {
-    cql
+    cql,
   }: {
-    cql: string
+    cql: string;
   },
 ): Promise<ConfluenceSearchSimpleResult[]> {
   let start = 0;

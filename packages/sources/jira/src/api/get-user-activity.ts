@@ -128,20 +128,22 @@ export async function getUserActivity(
     Boolean,
   ) as string[];
 
-  const epics = uniqueEpicLinksAsArray.length ? Object.fromEntries(
-    (
-      await smartSearch(context, {
-        keys: uniqueEpicLinksAsArray,
-      })
-    ).map((issue) => [
-      issue.key,
-      {
-        key: issue.key,
-        summary: issue.fields.summary,
-        description: issue.fields.description,
-      },
-    ]),
-  ) : {}
+  const epics = uniqueEpicLinksAsArray.length
+    ? Object.fromEntries(
+        (
+          await smartSearch(context, {
+            keys: uniqueEpicLinksAsArray,
+          })
+        ).map((issue) => [
+          issue.key,
+          {
+            key: issue.key,
+            summary: issue.fields.summary,
+            description: issue.fields.description,
+          },
+        ]),
+      )
+    : {};
 
   const issuesWithEvents = Array.from(uniqueIssues).map((issueKey) => {
     const filteredEvents = events.filter(

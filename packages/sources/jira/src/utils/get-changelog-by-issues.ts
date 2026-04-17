@@ -38,7 +38,7 @@ export function getChangelogByIssues(issues: JiraIssue[]): JiraChangelogItem[] {
   const authorsByJiraUser = new Map<string, JiraUser>();
   for (const issue of issues) {
     for (const { author } of issue.changelog.histories) {
-      if(!authorsByJiraUser.has(author.key)) {
+      if (!authorsByJiraUser.has(author.key)) {
         authorsByJiraUser.set(author.key, author);
       }
     }

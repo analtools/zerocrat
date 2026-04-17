@@ -16,10 +16,7 @@ async function buildTree(
     refs: Map<string, number>;
   },
 ): Promise<ConfluenceCommentSimpleTreeNode> {
-  const children = await api.getCommentsByContentId(
-    context,
-    comment.id,
-  );
+  const children = await api.getCommentsByContentId(context, comment.id);
 
   const replies = await Promise.all(
     children.map((child) =>
