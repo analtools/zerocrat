@@ -5,6 +5,7 @@
 .idea
 .history
 .husky
+.yarn
 dist
 coverage
 

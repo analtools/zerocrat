@@ -4,7 +4,7 @@ import type { GitlabApiContext, Namespace } from "../types";
 import { TempUniqueItems } from "../utils";
 
 export async function getNamespaces(
-  { gitlabToken, gitlabHost }: GitlabApiContext,
+  { gitlabToken, gitlabHost, debug }: GitlabApiContext,
   { search }: { search?: string },
 ): Promise<Namespace[]> {
   const perPage = 20;
@@ -25,6 +25,7 @@ export async function getNamespaces(
       headers: {
         "PRIVATE-TOKEN": gitlabToken,
       },
+      debug,
     });
 
     const prevSize = items.size();

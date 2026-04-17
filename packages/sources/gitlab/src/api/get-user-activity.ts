@@ -34,7 +34,7 @@ export async function getUserActivity(
     return { user, events: [], projects: [], jiraKeys: [] };
   }
 
-  const { gitlabToken, gitlabHost } = context;
+  const { gitlabToken, gitlabHost, debug } = context;
 
   const { fromDate, toDate } = options;
 
@@ -59,6 +59,7 @@ export async function getUserActivity(
       headers: {
         "PRIVATE-TOKEN": gitlabToken,
       },
+      debug,
     });
 
     const prevSize = items.size();
@@ -99,7 +100,7 @@ export async function getUserActivity(
         details.noteableIId = event.note.noteable_iid;
         details.path = event.note.position.new_path;
 
-        if(event.note.position.line_range) {
+        if (event.note.position.line_range) {
           if (
             event.note.position.line_range.start.new_line ===
             event.note.position.line_range.end.new_line

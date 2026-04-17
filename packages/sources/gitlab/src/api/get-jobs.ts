@@ -1,35 +1,16 @@
 import { request } from "@analtools/zerocrat-source-utils";
 
-import type { GitlabApiContext } from "../types";
+import type { GitlabApiContext, GitlabJob } from "../types";
 import { TempUniqueItems } from "../utils";
 
 type StatusOptions =
   | { status?: GitlabJob["status"]; statuses?: never }
   | { status?: never; statuses?: GitlabJob["status"][] };
 
-type GitlabJob = {
-  id: number;
-  name: string;
-  status:
-    | "created"
-    | "pending"
-    | "running"
-    | "failed"
-    | "success"
-    | "canceled"
-    | "skipped"
-    | "manual";
-  stage: string;
-  createdAt: Date;
-  startedAt: Date | null;
-  finishedAt: Date | null;
-  duration: number | null;
-};
-
 const perPage = 100;
 
 async function fetchJobs(
-  { gitlabToken, gitlabHost }: GitlabApiContext,
+  { gitlabToken, gitlabHost, debug }: GitlabApiContext,
   {
     projectId,
     pipelineId,
@@ -71,6 +52,7 @@ async function fetchJobs(
     headers: {
       "PRIVATE-TOKEN": gitlabToken,
     },
+    debug,
   });
 
   return items.map((item): GitlabJob => {
@@ -134,14 +116,10 @@ async function getJobRange(
   }
 }
 
- function getPageByDate(
-  jobRange: JobRange,
-  date: Date
-): number {
+function getPageByDate(jobRange: JobRange, date: Date): number {
   const k =
-    (date.getTime() - jobRange.fromDate.getTime()) /(
-      jobRange.toDate.getTime() -
-    jobRange.fromDate.getTime()) ;
+    (date.getTime() - jobRange.fromDate.getTime()) /
+    (jobRange.toDate.getTime() - jobRange.fromDate.getTime());
 
   return (k * jobRange.deltaId) / 100;
 }

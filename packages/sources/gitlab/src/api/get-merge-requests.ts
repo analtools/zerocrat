@@ -4,7 +4,7 @@ import type { GitlabApiContext, MergeRequest } from "../types";
 import { mergeRequestSelector, TempUniqueItems } from "../utils";
 
 export async function getMergeRequests(
-  { gitlabToken, gitlabHost }: GitlabApiContext,
+  { gitlabToken, gitlabHost, debug }: GitlabApiContext,
   {
     projectId,
     search,
@@ -51,6 +51,7 @@ export async function getMergeRequests(
       headers: {
         "PRIVATE-TOKEN": gitlabToken,
       },
+      debug,
     });
 
     const prevSize = items.size();

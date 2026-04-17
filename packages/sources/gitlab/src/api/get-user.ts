@@ -3,7 +3,7 @@ import { request } from "@analtools/zerocrat-source-utils";
 import type { GitlabApiContext, GitLabUser } from "../types";
 
 export async function getUser(
-  { gitlabToken, gitlabHost }: GitlabApiContext,
+  { gitlabToken, gitlabHost, debug }: GitlabApiContext,
   {
     username,
     userId,
@@ -31,6 +31,7 @@ export async function getUser(
       headers: {
         "PRIVATE-TOKEN": gitlabToken,
       },
+      debug,
     });
   } else {
     users = [
@@ -42,6 +43,7 @@ export async function getUser(
         headers: {
           "PRIVATE-TOKEN": gitlabToken,
         },
+        debug,
       }),
     ];
   }

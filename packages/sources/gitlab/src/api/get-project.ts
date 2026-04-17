@@ -3,7 +3,7 @@ import { request } from "@analtools/zerocrat-source-utils";
 import type { GitlabApiContext, GitlabProject } from "../types";
 
 export async function getProject(
-  { gitlabToken, gitlabHost }: GitlabApiContext,
+  { gitlabToken, gitlabHost, debug }: GitlabApiContext,
   { projectId }: { projectId: number },
 ): Promise<GitlabProject> {
   const project = await request({
@@ -14,6 +14,7 @@ export async function getProject(
     headers: {
       "PRIVATE-TOKEN": gitlabToken,
     },
+    debug,
   });
 
   return {

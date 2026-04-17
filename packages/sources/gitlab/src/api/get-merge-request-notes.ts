@@ -4,7 +4,7 @@ import type { GitlabApiContext, MergeRequestNotes } from "../types";
 import { TempUniqueItems } from "../utils";
 
 export async function getMergeRequestNotes(
-  { gitlabToken, gitlabHost }: GitlabApiContext,
+  { gitlabToken, gitlabHost, debug }: GitlabApiContext,
   { projectId, mergeRequestId }: { projectId: number; mergeRequestId: number },
 ): Promise<MergeRequestNotes[]> {
   const perPage = 20;
@@ -24,6 +24,7 @@ export async function getMergeRequestNotes(
       headers: {
         "PRIVATE-TOKEN": gitlabToken,
       },
+      debug,
     });
 
     const prevSize = items.size();

@@ -8,7 +8,7 @@ import type {
 import { TempUniqueItems } from "../utils";
 
 export async function getNamespaceProjects(
-  { gitlabToken, gitlabHost }: GitlabApiContext,
+  { gitlabToken, gitlabHost, debug }: GitlabApiContext,
   { namespaceId }: { namespaceId: number },
 ): Promise<GitLabProjectBasicInfo[]> {
   const perPage = 20;
@@ -28,6 +28,7 @@ export async function getNamespaceProjects(
       headers: {
         "PRIVATE-TOKEN": gitlabToken,
       },
+      debug,
     });
 
     const prevSize = items.size();

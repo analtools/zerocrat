@@ -4,7 +4,7 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 
 export default defineConfig([
-  globalIgnores(["dist", "node_modules", "coverage", ".husky", ".idea"]),
+  globalIgnores(["dist", "node_modules", "coverage", ".husky", ".idea", ".yarn"]),
   {
     files: ["packages/cli/src/**/*.{ts,tsx}", "packages/sources/*/src/**/*.{ts,tsx}"],
     extends: [js.configs.recommended, tsEslint.configs.recommended],

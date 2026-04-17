@@ -34,5 +34,5 @@ export async function getUserActivity(
 
   events.sort((a, b) => a.date.getTime() - b.date.getTime());
 
-  return events
+  return events;
 }

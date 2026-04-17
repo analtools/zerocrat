@@ -25,7 +25,7 @@ export async function search(
   if (context.jiraEpicLinkField === undefined) {
     context.jiraEpicLinkField = await getEpicField(context);
   }
-  const { jiraHost, jiraToken } = context;
+  const { jiraHost, jiraToken, debug } = context;
 
   let startAt = 0;
   const maxResults = 50;
@@ -36,8 +36,6 @@ export async function search(
     const { issues } = await request<{ issues: JiraIssue[] }>({
       host: jiraHost,
       endpoint: "/rest/api/2/search",
-      //searchParams: expand.includes("changelog") ? { expand: "changelog" } : {},
-      // searchParams: {},
       method: "get",
       headers: {
         Authorization: `Bearer ${jiraToken}`,
@@ -53,7 +51,7 @@ export async function search(
           )
           .filter(Boolean),
       },
-      debug: true,
+      debug,
     });
 
     for (const issue of issues) {

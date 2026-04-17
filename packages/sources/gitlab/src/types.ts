@@ -1,4 +1,8 @@
-export type GitlabApiContext = { gitlabHost: string; gitlabToken: string };
+export type GitlabApiContext = {
+  gitlabHost: string;
+  gitlabToken: string;
+  debug?: boolean;
+};
 
 export type RepositoryMergeRequestEvent =
   | {
@@ -356,4 +360,23 @@ export type UserActivityEvent = (
     projectPathWithNamespace: string;
     jiraKey: string | null;
   };
+};
+
+export type GitlabJob = {
+  id: number;
+  name: string;
+  status:
+    | "created"
+    | "pending"
+    | "running"
+    | "failed"
+    | "success"
+    | "canceled"
+    | "skipped"
+    | "manual";
+  stage: string;
+  createdAt: Date;
+  startedAt: Date | null;
+  finishedAt: Date | null;
+  duration: number | null;
 };

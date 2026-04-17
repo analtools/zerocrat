@@ -1,4 +1,9 @@
-export type JiraClientContext = { jiraHost: string; jiraToken: string, jiraEpicLinkField?:string|null };
+export type JiraClientContext = {
+  jiraHost: string;
+  jiraToken: string;
+  jiraEpicLinkField?: string | null;
+  debug?: boolean;
+};
 
 export type JiraIssue = {
   id: string;
@@ -12,7 +17,7 @@ export type JiraIssue = {
       outwardIssue?: { id: string; key: string };
     }>;
     created: string;
-    creator: { name: string}
+    creator: { name: string };
   };
   changelog: {
     startAt: number;
@@ -121,24 +126,23 @@ export type SmartSearchOptions = {
       }
   );
 
-  export type JiraEvent = {
-    username: string;
-    issue: {
-      key: string;
-      summary: string;
-      description: string;
-      epicLink: string | null;
-      issueLinks: any[];
-    };
-    date: Date;
-    action: string;
-    from: string | null;
-    to: string | null;
+export type JiraEvent = {
+  username: string;
+  issue: {
+    key: string;
+    summary: string;
+    description: string;
+    epicLink: string | null;
+    issueLinks: any[];
   };
+  date: Date;
+  action: string;
+  from: string | null;
+  to: string | null;
+};
 
 export type JiraChangelogItem = HistoryChangeItem & {
-  username: string
-  issue: JiraIssue
-  date: Date
-}
-
+  username: string;
+  issue: JiraIssue;
+  date: Date;
+};
