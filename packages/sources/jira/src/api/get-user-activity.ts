@@ -13,13 +13,7 @@ function getEventsByChangelog(changelog: JiraChangelogItem[]): JiraEvent[] {
 
     const event: JiraEvent = {
       username: item.username,
-      issue: {
-        key: item.issue.key,
-        summary: item.issue.fields.summary,
-        description: item.issue.fields.description,
-        issueLinks: item.issue.fields.issuelinks ?? [],
-        epicLink: item.issue.fields.epiclink ?? null,
-      },
+      issue: item.issue,
       date: item.date,
       action: `Field "${field![0]!.toUpperCase() + field.slice(1)}" updated`,
       from: fromString,
@@ -107,8 +101,10 @@ export async function getUserActivity(
   const users = options.usernames ?? [options.username];
 
   const changelog = getChangelogByIssues(issues).filter(
-    ({ date, username }) =>
-      (users ? users.includes(username) : true) &&
+    ({ date, username, toString }) =>
+      (users
+        ? users.includes(username) || (toString && users.includes(toString))
+        : true) &&
       (options.fromDate ? date >= options.fromDate : true) &&
       (options.toDate ? date <= options.toDate : true),
   );
@@ -120,53 +116,5 @@ export async function getUserActivity(
     changelog.sort((a, b) => b.date.getTime() - a.date.getTime());
   }
 
-  const events = getEventsByChangelog(changelog);
-
-  const uniqueIssues = new Set(events.map((event) => event.issue.key));
-  const uniqueEpicLinks = new Set(events.map((event) => event.issue.epicLink));
-  const uniqueEpicLinksAsArray = Array.from(uniqueEpicLinks).filter(
-    Boolean,
-  ) as string[];
-
-  const epics = uniqueEpicLinksAsArray.length
-    ? Object.fromEntries(
-        (
-          await smartSearch(context, {
-            keys: uniqueEpicLinksAsArray,
-          })
-        ).map((issue) => [
-          issue.key,
-          {
-            key: issue.key,
-            summary: issue.fields.summary,
-            description: issue.fields.description,
-          },
-        ]),
-      )
-    : {};
-
-  const issuesWithEvents = Array.from(uniqueIssues).map((issueKey) => {
-    const filteredEvents = events.filter(
-      (event) => event.issue.key === issueKey,
-    );
-    return {
-      issue: filteredEvents[0]!.issue,
-      epic: epics[filteredEvents[0]!.issue.epicLink!] ?? null,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      events: filteredEvents.map(({ issue: _, ...event }) => ({ ...event })),
-    };
-  });
-
-  const issuesWithEventsAndEmptyEpic = issuesWithEvents
-    .filter((issueWithEvents) => !issueWithEvents.epic)
-    .map(({ issue, events }) => ({ issue, events }));
-
-  const epicWithIssuesWithEvents = uniqueEpicLinksAsArray.map((epicLink) => ({
-    epic: epics[epicLink] ?? null,
-    issues: issuesWithEvents
-      .filter((issueWithEvents) => issueWithEvents.epic?.key === epicLink)
-      .map(({ issue, events }) => ({ issue, events })),
-  }));
-
-  return [...issuesWithEventsAndEmptyEpic, ...epicWithIssuesWithEvents];
+  return getEventsByChangelog(changelog);
 }
