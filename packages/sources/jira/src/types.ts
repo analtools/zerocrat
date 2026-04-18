@@ -13,9 +13,11 @@ export type JiraIssue = {
     description: string;
     epiclink?: string;
     issuelinks: Array<{
-      type: { outward?: string };
+      type: { outward?: string; inward?: string };
       outwardIssue?: { id: string; key: string };
+      inwardIssue?: { id: string; key: string };
     }>;
+    issuetype: { name: string };
     created: string;
     creator: { name: string };
   };
@@ -128,13 +130,7 @@ export type SmartSearchOptions = {
 
 export type JiraEvent = {
   username: string;
-  issue: {
-    key: string;
-    summary: string;
-    description: string;
-    epicLink: string | null;
-    issueLinks: any[];
-  };
+  issue: JiraIssue;
   date: Date;
   action: string;
   from: string | null;
@@ -145,4 +141,16 @@ export type JiraChangelogItem = HistoryChangeItem & {
   username: string;
   issue: JiraIssue;
   date: Date;
+};
+
+export type JiraIssueHierarchyItem = {
+  key: string;
+  type: string;
+  name: string;
+  description: string;
+  parent: string | null;
+  allParents: string[];
+  ancestors: string[];
+  path: string;
+  depth: number;
 };
