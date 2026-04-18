@@ -3,4 +3,5 @@
 .husky
 packages/*/src
 .prettierignore
-vitest.config.mts
+vitest.config.unit.mts
+vitest.config.e2e.mts
