@@ -88,19 +88,6 @@ export async function getUserActivity(
     );
     result.push(`  path: ${hierarchyByKeys.get(event.issue.key)?.path}`);
     result.push(``);
-
-    /*
-    - id: EVT-1
-      task: TASK-3
-      type: status_change
-      from: To Do
-      to: In Progress
-      timestamp: 2024-01-01T10:00:00Z
-
-      parent: TASK-2
-      ancestors: [TASK-2, TASK-1, EPIC-1]
-      path: EPIC-1 > TASK-1 > TASK-2 > TASK-3
-    */
   }
 
   return result.join("\n").trim();
