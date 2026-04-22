@@ -10,12 +10,14 @@ export const createJiraClient = (context: JiraClientContext) =>
   ({
     api: {
       getEpicField: api.getEpicField.bind(null, context),
-      getIssuesLineage: api.getIssuesLineage.bind(null, context),
+      getParentIssues: api.getParentIssues.bind(null, context),
+      getChildrenIssues: api.getChildrenIssues.bind(null, context),
       getUserActivity: api.getUserActivity.bind(null, context),
       search: api.search.bind(null, context),
       smartSearch: api.smartSearch.bind(null, context),
     },
     llm: {
+      getReportByIssues: llm.getReportByIssues.bind(null, context),
       getUserActivity: llm.getUserActivity.bind(null, context),
     },
   }) satisfies {
