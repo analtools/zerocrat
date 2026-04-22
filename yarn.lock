@@ -23,11 +23,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@analtools/zerocrat-source-gitlab@workspace:packages/sources/gitlab"
   dependencies:
+    "@analtools/zerocrat-source-jira": "npm:0.0.0-stub"
     "@analtools/zerocrat-source-utils": "npm:0.0.0-stub"
   languageName: unknown
   linkType: soft
 
-"@analtools/zerocrat-source-jira@workspace:packages/sources/jira":
+"@analtools/zerocrat-source-jira@npm:0.0.0-stub, @analtools/zerocrat-source-jira@workspace:packages/sources/jira":
   version: 0.0.0-use.local
   resolution: "@analtools/zerocrat-source-jira@workspace:packages/sources/jira"
   dependencies:
