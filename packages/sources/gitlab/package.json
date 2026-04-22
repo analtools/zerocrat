@@ -6,6 +6,7 @@
   "module": "./dist/index.js",
   "main": "./dist/index.js",
   "dependencies": {
+    "@analtools/zerocrat-source-jira": "0.0.0-stub",
     "@analtools/zerocrat-source-utils": "0.0.0-stub"
   },
   "scripts": {

@@ -5,6 +5,8 @@ import { createGitlabClient } from ".";
 
 describe("Gitlab E2E", () => {
   const {
+    JIRA_TOKEN: jiraToken,
+    JIRA_HOST: jiraHost,
     GITLAB_TOKEN: gitlabToken,
     GITLAB_HOST: gitlabHost,
     GITLAB_TEST_USERNAME: username,
@@ -14,6 +16,8 @@ describe("Gitlab E2E", () => {
     GITLAB_TEST_MR_ID: mergeRequestIdAsString,
   } = process.env;
 
+  assert(jiraToken);
+  assert(jiraHost);
   assert(gitlabToken);
   assert(gitlabHost);
   assert(username);
@@ -27,9 +31,11 @@ describe("Gitlab E2E", () => {
   const projectId = Number(projectIdAsString);
   const mergeRequestId = Number(mergeRequestIdAsString);
 
-  const { api } = createGitlabClient({
+  const { api, llm } = createGitlabClient({
     gitlabHost,
     gitlabToken,
+    jiraHost,
+    jiraToken,
   });
 
   it("api.getNamespaces", async () => {
@@ -75,7 +81,7 @@ describe("Gitlab E2E", () => {
     console.log(items);
   });
 
-  it("getUserActivity", async () => {
+  it("api.getUserActivity", async () => {
     const items = await api.getUserActivity({
       username,
       fromDate: prettyDate("current week"),
@@ -83,10 +89,18 @@ describe("Gitlab E2E", () => {
     console.log(JSON.stringify(items, null, 2));
   });
 
-  it("getProject", async () => {
+  it("api.getProject", async () => {
     const project = await api.getProject({
       projectId,
     });
     console.log(JSON.stringify(project, null, 2));
+  });
+
+  it("llm.getUserActivity", async () => {
+    const items = await llm.getUserActivity({
+      username,
+      fromDate: prettyDate("prev week"),
+    });
+    console.log(items);
   });
 });
