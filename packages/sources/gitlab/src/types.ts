@@ -1,6 +1,11 @@
+import type { createJiraClient } from "@analtools/zerocrat-source-jira";
+
 export type GitlabApiContext = {
   gitlabHost: string;
   gitlabToken: string;
+  jiraHost?: string;
+  jiraToken?: string;
+  jiraClient?: ReturnType<typeof createJiraClient>;
   debug?: boolean;
 };
 
@@ -349,6 +354,18 @@ export type UserActivityEvent = (
     ) & { details: { mergeRequestId: number; mergeRequestTitle: string } })
   | {
       action: "commented on";
+      details: {
+        mergeRequestId: number;
+        mergeRequestTitle: string;
+        noteId: number;
+        noteBody: string;
+        noteableId: number;
+        noteableIId: number;
+        path: string | null;
+        line?: string;
+        resolvedByUsername?: string;
+        resolvedByUserId?: number;
+      };
     }
 ) & {
   id: number;

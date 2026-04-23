@@ -10,14 +10,16 @@ describe("Jira E2E", () => {
     JIRA_TOKEN: jiraToken,
     JIRA_TEST_USERNAME: username,
     JIRA_TEST_PROJECT: project,
-    JIRA_TEST_KEY: key,
+    JIRA_TEST_TASK_KEY: taskKey,
+    JIRA_TEST_EPIC_KEY: epicKey,
   } = process.env;
 
   assert(jiraHost);
   assert(jiraToken);
   assert(username);
   assert(project);
-  assert(key);
+  assert(taskKey);
+  assert(epicKey);
 
   const client = createJiraClient({ jiraHost, jiraToken, debug: false });
 
@@ -51,8 +53,15 @@ describe("Jira E2E", () => {
     console.log(field);
   });
 
-  it("api.getIssuesLineage", async () => {
-    const issues = await client.api.getIssuesLineage({ keys: [key] });
+  it("api.getParentIssues", async () => {
+    const issues = await client.api.getParentIssues({ keys: [taskKey] });
+    console.log(JSON.stringify(buildIssueHierarchy(issues), null, 2));
+  });
+
+  it("api.getChildrenIssues", async () => {
+    const issues = await client.api.getChildrenIssues({
+      keys: [epicKey],
+    });
     console.log(JSON.stringify(buildIssueHierarchy(issues), null, 2));
   });
 });

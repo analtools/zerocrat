@@ -2,7 +2,7 @@ import type { JiraClientContext, JiraIssue } from "../types";
 import { getIssueParentKeys } from "../utils";
 import { smartSearch } from "./smart-search";
 
-export async function getIssuesLineage(
+export async function getParentIssues(
   context: JiraClientContext,
   options:
     | {
@@ -44,7 +44,7 @@ export async function getIssuesLineage(
 
   return [
     ...issues,
-    ...(await getIssuesLineage(context, {
+    ...(await getParentIssues(context, {
       issues: [...epics, ...parents],
     })),
   ];

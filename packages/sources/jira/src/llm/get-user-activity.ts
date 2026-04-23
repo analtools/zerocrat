@@ -1,3 +1,5 @@
+import { formatDate } from "@analtools/zerocrat-source-utils";
+
 import * as api from "../api";
 import type {
   JiraClientContext,
@@ -5,19 +7,20 @@ import type {
   JiraIssueHierarchyItem,
   SmartSearchOptions,
 } from "../types";
-import { buildIssueHierarchy, formatDate } from "../utils";
+import { buildIssueHierarchy } from "../utils";
+import { getReportByIssues } from "./get-report-by-issues";
 
 export async function getUserActivity(
   context: JiraClientContext,
   options: SmartSearchOptions &
     (
       | {
-          username: string;
+          username?: string;
           usernames?: never;
         }
       | {
           username?: never;
-          usernames: string[];
+          usernames?: string[];
         }
     ),
 ) {
@@ -30,16 +33,16 @@ export async function getUserActivity(
     }
   }
 
-  const lineage = await api.getIssuesLineage(context, {
-    issues: Array.from(issues.values()),
-  });
-
   const result: string[] = [];
 
   const usernames =
     (options.username ? [options.username] : options.usernames)?.map(
       (username) => `@${username}`,
     ) ?? [];
+
+  const issueLineage = await api.getParentIssues(context, {
+    issues: Array.from(issues.values()),
+  });
 
   result.push(
     `# Jira Activity - ${usernames.join(",")}${options.fromDate ? ` - from ${formatDate(options.fromDate)}` : ""}${options.toDate ? ` - to ${formatDate(options.toDate ?? new Date())}` : ""}`,
@@ -49,24 +52,13 @@ export async function getUserActivity(
   result.push(`JIRA_HOST = ${context.jiraHost}`);
   result.push(``);
 
-  result.push(`## Issues`);
+  result.push(await getReportByIssues(context, { issues: issueLineage }));
   result.push(``);
 
-  const hierarchy = buildIssueHierarchy(lineage);
+  const hierarchy = buildIssueHierarchy(issueLineage);
   const hierarchyByKeys = new Map<string, JiraIssueHierarchyItem>();
   for (const hierarchyItem of hierarchy) {
     hierarchyByKeys.set(hierarchyItem.key, hierarchyItem);
-
-    result.push(`- task: ${JSON.stringify(hierarchyItem.key)}`);
-    result.push(`  type: ${JSON.stringify(hierarchyItem.type)}`);
-    result.push(`  name: ${JSON.stringify(hierarchyItem.name)}`);
-    result.push(`  description: ${JSON.stringify(hierarchyItem.description)}`);
-    result.push(`  parent: ${JSON.stringify(hierarchyItem.parent)}`);
-    result.push(`  allParents: ${JSON.stringify(hierarchyItem.allParents)}`);
-    result.push(`  ancestors: ${JSON.stringify(hierarchyItem.ancestors)}`);
-    result.push(`  path: ${hierarchyItem.path}`);
-    result.push(`  depth: ${hierarchyItem.depth}`);
-    result.push(``);
   }
 
   result.push(`## Events`);

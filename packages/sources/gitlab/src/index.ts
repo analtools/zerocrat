@@ -5,9 +5,18 @@ import type { GitlabApiContext } from "./types";
 export * as api from "./api";
 export * as llm from "./llm";
 export * from "./types";
+import * as jira from "@analtools/zerocrat-source-jira";
 
-export const createGitlabClient = (context: GitlabApiContext) =>
-  ({
+export function createGitlabClient(context: GitlabApiContext) {
+  if (!context.jiraClient && context.jiraHost && context.jiraToken) {
+    context.jiraClient = jira.createJiraClient({
+      jiraHost: context.jiraHost,
+      jiraToken: context.jiraToken,
+      debug: context.debug,
+    });
+  }
+
+  return {
     api: {
       getJobs: api.getJobs.bind(null, context),
       getMergeRequestNotes: api.getMergeRequestNotes.bind(null, context),
@@ -18,8 +27,11 @@ export const createGitlabClient = (context: GitlabApiContext) =>
       getUser: api.getUser.bind(null, context),
       getUserActivity: api.getUserActivity.bind(null, context),
     },
-    llm: {},
-  }) satisfies {
+    llm: {
+      getUserActivity: llm.getUserActivity.bind(null, context),
+    },
+  } satisfies {
     api: Record<keyof typeof api, unknown>;
     llm: Record<keyof typeof llm, unknown>;
   };
+}

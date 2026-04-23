@@ -1,5 +1,6 @@
+import { formatDate } from "@analtools/zerocrat-source-utils";
+
 import type { JiraClientContext, SmartSearchOptions } from "../types";
-import { formatDate } from "../utils";
 import { search } from "./search";
 
 export async function smartSearch(

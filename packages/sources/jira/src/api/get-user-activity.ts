@@ -87,24 +87,32 @@ export async function getUserActivity(
   options: SmartSearchOptions &
     (
       | {
-          username: string;
+          username?: string;
           usernames?: never;
         }
       | {
           username?: never;
-          usernames: string[];
+          usernames?: string[];
         }
     ),
 ) {
   const issues = await smartSearch(context, options);
 
-  const users = options.usernames ?? [options.username];
+  const users =
+    options.usernames ?? (options.username ? [options.username] : []);
 
-  const changelog = getChangelogByIssues(issues).filter(
-    ({ date, username, toString }) =>
-      (users
+  let changelog = getChangelogByIssues(issues);
+
+  if (users.length > 0) {
+    changelog = changelog.filter(({ username, toString }) =>
+      users
         ? users.includes(username) || (toString && users.includes(toString))
-        : true) &&
+        : true,
+    );
+  }
+
+  changelog = changelog.filter(
+    ({ date }) =>
       (options.fromDate ? date >= options.fromDate : true) &&
       (options.toDate ? date <= options.toDate : true),
   );
