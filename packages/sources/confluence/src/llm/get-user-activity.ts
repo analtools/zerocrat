@@ -19,7 +19,7 @@ export async function getUserActivity(
   const result: string[] = [];
 
   result.push(
-    `# Confluence Activity - ${options.username}${options.fromDate ? ` - from ${formatDate(options.fromDate)}` : ""} to ${formatDate(options.toDate ?? new Date())}`,
+    `# Confluence Activity - ${options.username} - ${options.fromDate ? `from ${formatDate(options.fromDate)} ` : ""}to ${formatDate(options.toDate ?? new Date())}`,
   );
   result.push(``);
   result.push(`CONFLUENCE_HOST = ${context.confluenceHost!}`);

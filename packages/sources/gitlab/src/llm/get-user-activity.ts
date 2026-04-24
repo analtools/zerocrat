@@ -25,7 +25,7 @@ export async function getUserActivity(
   const result: string[] = [];
 
   result.push(
-    `# Gitlab Activity - ${options.username}${options.fromDate ? ` - from ${formatDate(options.fromDate)}` : ""} to ${formatDate(options.toDate ?? new Date())}`,
+    `# Gitlab Activity - ${options.username} - ${options.fromDate ? `from ${formatDate(options.fromDate)} ` : ""}to ${formatDate(options.toDate ?? new Date())}`,
   );
 
   result.push(``);
@@ -35,8 +35,8 @@ export async function getUserActivity(
     result.push(`JIRA_HOST = ${context.jiraHost!}`);
     result.push(``);
     result.push(await jiraClient.llm.getReportByIssues({ issues }));
-    result.push(``);
   }
+  result.push(``);
 
   result.push(`## Events`);
   for (const event of events) {
