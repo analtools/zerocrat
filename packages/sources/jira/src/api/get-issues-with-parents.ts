@@ -2,7 +2,7 @@ import type { JiraClientContext, JiraIssue } from "../types";
 import { getIssueParentKeys } from "../utils";
 import { smartSearch } from "./smart-search";
 
-export async function getParentIssues(
+export async function getIssuesWithParents(
   context: JiraClientContext,
   options:
     | {
@@ -17,7 +17,7 @@ export async function getParentIssues(
   const issues =
     options.issues ??
     (await smartSearch(context, {
-      keys: Array.from(new Set(options.keys)),
+      keys: options.keys,
     }));
 
   if (issues.length === 0) {
@@ -44,7 +44,7 @@ export async function getParentIssues(
 
   return [
     ...issues,
-    ...(await getParentIssues(context, {
+    ...(await getIssuesWithParents(context, {
       issues: [...epics, ...parents],
     })),
   ];

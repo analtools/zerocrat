@@ -73,6 +73,26 @@ export type SmartSearchOptions = {
         project?: never;
         projects?: string[];
       }
+  ) &
+  (
+    | {
+        epicLink?: string;
+        epicLinks?: never;
+      }
+    | {
+        epicLink?: never;
+        epicLinks?: string[];
+      }
+  ) &
+  (
+    | {
+        issueType?: string;
+        issueTypes?: never;
+      }
+    | {
+        issueType?: never;
+        issueTypes?: string[];
+      }
   ) & {
     fromDate?: Date;
     toDate?: Date;

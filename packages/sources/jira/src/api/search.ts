@@ -10,6 +10,7 @@ export async function search(
     fields = [
       "summary",
       "issuelinks",
+      "issuetype",
       "description",
       "epiclink",
       "created",
@@ -52,6 +53,7 @@ export async function search(
           .filter(Boolean),
       },
       debug,
+      arrayFormat: "comma",
     });
 
     for (const issue of issues) {

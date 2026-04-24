@@ -1,4 +1,4 @@
-import { stringify } from "qs";
+import { type IStringifyBaseOptions, stringify } from "qs";
 import { type BodyInit, FormData, Headers, type HeadersInit } from "undici";
 
 import { limitedFetch } from "./limited-fetch";
@@ -14,10 +14,11 @@ export async function request<T = any>(options: {
   headers: Record<string, string | string[]>;
   searchParams: Record<string, unknown>;
   debug?: boolean;
+  arrayFormat?: IStringifyBaseOptions["arrayFormat"];
 }): Promise<T> {
   let url = `${options.host}${options.endpoint}`;
   if (options?.searchParams) {
-    url += `?${stringify(options.searchParams, { arrayFormat: "brackets" })}`;
+    url += `?${stringify(options.searchParams, { arrayFormat: options.arrayFormat ?? "brackets" })}`;
   }
 
   if (options.debug) {
