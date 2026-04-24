@@ -1,9 +1,8 @@
 import type { JiraClientContext, JiraIssue } from "../types";
 import { getIssueChildrenKeys } from "../utils";
-import { search } from "./search";
 import { smartSearch } from "./smart-search";
 
-export async function getChildrenIssues(
+export async function getIssuesWithChildren(
   context: JiraClientContext,
   options:
     | {
@@ -33,13 +32,13 @@ export async function getChildrenIssues(
 
   const subTasks =
     subTaskKeys.length > 0
-      ? await search(context, {
-          jql: `key in (${subTaskKeys.join(",")})`,
+      ? await smartSearch(context, {
+          keys: subTaskKeys,
         })
       : [];
 
-  const epicChildren = await search(context, {
-    jql: `"Epic Link" in (${taskKeys.join(",")})`,
+  const epicChildren = await smartSearch(context, {
+    epicLinks: taskKeys,
   });
 
   const allChildren = [...subTasks, ...epicChildren];
@@ -50,7 +49,7 @@ export async function getChildrenIssues(
 
   return [
     ...issues,
-    ...(await getChildrenIssues(context, {
+    ...(await getIssuesWithChildren(context, {
       issues: allChildren,
     })),
   ];

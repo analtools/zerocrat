@@ -19,7 +19,7 @@ export async function getUserActivity(
   const { events, jiraKeys } = await api.getUserActivity(context, options);
 
   const issues = jiraClient
-    ? await jiraClient.api.getParentIssues({ keys: jiraKeys })
+    ? await jiraClient.api.getIssuesWithParents({ keys: jiraKeys })
     : [];
 
   const result: string[] = [];

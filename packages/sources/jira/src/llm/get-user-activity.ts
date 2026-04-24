@@ -7,13 +7,15 @@ import type {
   JiraIssueHierarchyItem,
   SmartSearchOptions,
 } from "../types";
-import { buildIssueHierarchy } from "../utils";
+import { buildIssueHierarchy, deduplicateIssues } from "../utils";
 import { getReportByIssues } from "./get-report-by-issues";
 
 export async function getUserActivity(
   context: JiraClientContext,
-  options: SmartSearchOptions &
-    (
+  options: SmartSearchOptions & {
+    withChildren?: boolean;
+    withParents?: boolean;
+  } & (
       | {
           username?: string;
           usernames?: never;
@@ -26,12 +28,14 @@ export async function getUserActivity(
 ) {
   const events = await api.getUserActivity(context, options);
 
-  const issues = new Map<string, JiraIssue>();
+  const uniqueIssuesMap = new Map<string, JiraIssue>();
   for (const event of events) {
-    if (!issues.has(event.issue.key)) {
-      issues.set(event.issue.key, event.issue);
+    if (!uniqueIssuesMap.has(event.issue.key)) {
+      uniqueIssuesMap.set(event.issue.key, event.issue);
     }
   }
+
+  let issues = Array.from(uniqueIssuesMap.values());
 
   const result: string[] = [];
 
@@ -40,9 +44,19 @@ export async function getUserActivity(
       (username) => `@${username}`,
     ) ?? [];
 
-  const issueLineage = await api.getParentIssues(context, {
-    issues: Array.from(issues.values()),
-  });
+  if (options.withParents) {
+    const issueWithParents = await api.getIssuesWithParents(context, {
+      issues,
+    });
+    issues = deduplicateIssues(issueWithParents);
+  }
+
+  if (options.withChildren) {
+    const issuesWithChildren = await api.getIssuesWithChildren(context, {
+      issues,
+    });
+    issues = deduplicateIssues(issuesWithChildren);
+  }
 
   result.push(
     `# Jira Activity - ${usernames.join(",")}${options.fromDate ? ` - from ${formatDate(options.fromDate)}` : ""}${options.toDate ? ` - to ${formatDate(options.toDate ?? new Date())}` : ""}`,
@@ -52,10 +66,10 @@ export async function getUserActivity(
   result.push(`JIRA_HOST = ${context.jiraHost}`);
   result.push(``);
 
-  result.push(await getReportByIssues(context, { issues: issueLineage }));
+  result.push(await getReportByIssues(context, { issues }));
   result.push(``);
 
-  const hierarchy = buildIssueHierarchy(issueLineage);
+  const hierarchy = buildIssueHierarchy(issues);
   const hierarchyByKeys = new Map<string, JiraIssueHierarchyItem>();
   for (const hierarchyItem of hierarchy) {
     hierarchyByKeys.set(hierarchyItem.key, hierarchyItem);

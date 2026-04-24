@@ -53,13 +53,13 @@ describe("Jira E2E", () => {
     console.log(field);
   });
 
-  it("api.getParentIssues", async () => {
-    const issues = await client.api.getParentIssues({ keys: [taskKey] });
+  it("api.getIssuesWithParents", async () => {
+    const issues = await client.api.getIssuesWithParents({ keys: [taskKey] });
     console.log(JSON.stringify(buildIssueHierarchy(issues), null, 2));
   });
 
-  it("api.getChildrenIssues", async () => {
-    const issues = await client.api.getChildrenIssues({
+  it("api.getIssuesWithChildren", async () => {
+    const issues = await client.api.getIssuesWithChildren({
       keys: [epicKey],
     });
     console.log(JSON.stringify(buildIssueHierarchy(issues), null, 2));
