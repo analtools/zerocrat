@@ -59,7 +59,7 @@ export async function getUserActivity(
   }
 
   result.push(
-    `# Jira Activity - ${usernames.join(",")}${options.fromDate ? ` - from ${formatDate(options.fromDate)}` : ""}${options.toDate ? ` - to ${formatDate(options.toDate ?? new Date())}` : ""}`,
+    `# Jira Activity - ${usernames.join(",")} - ${options.fromDate ? `from ${formatDate(options.fromDate)} ` : ""}to ${formatDate(options.toDate ?? new Date())}`,
   );
   result.push(``);
 
