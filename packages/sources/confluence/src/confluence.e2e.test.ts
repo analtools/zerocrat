@@ -28,11 +28,11 @@ describe("Confluence E2E", () => {
   const { llm } = createConfluenceClient(context);
 
   it("llm.getUserActivity", async () => {
-    const items = await llm.getUserActivity({
+    const report = await llm.getUserActivity({
       username,
       fromDate: prettyDate("prev month"),
     });
-    console.log(items.join("\n\n"));
+    console.log(report);
   });
 
   it("llm.getPage by pageUrl", async () => {
