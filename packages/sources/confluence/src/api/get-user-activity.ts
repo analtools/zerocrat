@@ -25,7 +25,7 @@ export async function getUserActivity(
   }
   if (toDate) {
     const formattedDate = formatDate(toDate);
-    cql += ` AND (created <= '${formattedDate}' OR lastModified <= '${toDate}')`;
+    cql += ` AND (created <= '${formattedDate}' OR lastModified <= '${formattedDate}')`;
   }
 
   const events = await api.search(context, {
