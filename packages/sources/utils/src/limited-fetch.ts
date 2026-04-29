@@ -1,5 +1,4 @@
 import Bottleneck from "bottleneck";
-import { fetch, type RequestInfo, type RequestInit } from "undici";
 
 import { withRetry } from "./with-retry";
 
@@ -9,7 +8,7 @@ const limiter = new Bottleneck({
 });
 
 export const limitedFetch = limiter.wrap(
-  async (url: RequestInfo, init: RequestInit) => {
+  async (url: string, init: RequestInit) => {
     return withRetry(async () => {
       const res = await fetch(url, init);
 

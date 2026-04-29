@@ -109,6 +109,10 @@ async function fetchIssues(
     );
   }
 
+  if (queries.length === 0) {
+    return [];
+  }
+
   return search(context, {
     jql: queries.join(" AND "),
     fields: options.fields,

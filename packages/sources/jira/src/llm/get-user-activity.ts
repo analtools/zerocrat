@@ -3,7 +3,6 @@ import { formatDate } from "@analtools/zerocrat-source-utils";
 import * as api from "../api";
 import type {
   JiraClientContext,
-  JiraIssue,
   JiraIssueHierarchyItem,
   SmartSearchOptions,
 } from "../types";
@@ -26,16 +25,7 @@ export async function getUserActivity(
         }
     ),
 ) {
-  const events = await api.getUserActivity(context, options);
-
-  const uniqueIssuesMap = new Map<string, JiraIssue>();
-  for (const event of events) {
-    if (!uniqueIssuesMap.has(event.issue.key)) {
-      uniqueIssuesMap.set(event.issue.key, event.issue);
-    }
-  }
-
-  let issues = Array.from(uniqueIssuesMap.values());
+  let issues = await api.smartSearch(context, options);
 
   const result: string[] = [];
 
@@ -57,6 +47,13 @@ export async function getUserActivity(
     });
     issues = deduplicateIssues(issuesWithChildren);
   }
+
+  const events = await api.getUserActivity(context, {
+    keys: issues.map((issue) => issue.key),
+    ...(options.usernames
+      ? { usernames: options.usernames }
+      : { username: options.username }),
+  });
 
   result.push(
     `# Jira Activity - ${usernames.join(",")} - ${options.fromDate ? `from ${formatDate(options.fromDate)} ` : ""}to ${formatDate(options.toDate ?? new Date())}`,
