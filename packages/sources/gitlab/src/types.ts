@@ -1,12 +1,16 @@
-import type { createJiraClient } from "@analtools/zerocrat-source-jira";
+import type { JiraClient } from "@analtools/zerocrat-source-jira";
 
 export type GitlabApiContext = {
   gitlabHost: string;
   gitlabToken: string;
-  jiraHost?: string;
-  jiraToken?: string;
-  jiraClient?: ReturnType<typeof createJiraClient>;
   debug?: boolean;
+} & (
+  | { jiraHost: string; jiraToken: string }
+  | { jiraHost?: never; jiraToken?: never }
+);
+
+export type GitlabApiContextState = {
+  jiraClient?: JiraClient;
 };
 
 export type RepositoryMergeRequestEvent =
