@@ -7,7 +7,7 @@ export type ConfluenceApiContext = {
 
 export type ConfluenceContent = {
   id: string;
-  type: "page" | "comment" | "attachment";
+  type: "page" | "comment" | "attachment" | "other";
   title: string;
   _links: {
     webui: string;
@@ -21,7 +21,7 @@ export type ConfluenceSearchResultResultContainer = {
 };
 
 export type ConfluenceSearchResult = {
-  content: ConfluenceContent;
+  content?: ConfluenceContent;
   title: string;
   excerpt: string;
   url: string;
