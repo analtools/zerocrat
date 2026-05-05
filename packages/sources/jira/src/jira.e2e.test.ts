@@ -48,6 +48,15 @@ describe("Jira E2E", () => {
     console.log(JSON.stringify(items, null, 2));
   });
 
+  it("api.getUserActivity by actor", async () => {
+    const items = await client.api.getUserActivity({
+      actor: username,
+      fromDate: prettyDate("prev week"),
+    });
+    console.log(items.length);
+    console.log(JSON.stringify(items, null, 2));
+  });
+
   it("api.getEpicField", async () => {
     const field = await client.api.getEpicField();
     console.log(field);

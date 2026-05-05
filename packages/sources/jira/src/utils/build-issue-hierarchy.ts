@@ -88,6 +88,7 @@ export function buildIssueHierarchy(
       type,
       name: issue.fields.summary,
       description: issue.fields.description,
+      dueDate: issue.fields.duedate ?? null,
       parent,
       allParents,
       ancestors,

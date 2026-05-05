@@ -63,8 +63,8 @@ export async function getUserActivity(
   result.push(`JIRA_HOST = ${context.jiraHost}`);
   result.push(``);
 
-  result.push(await getReportByIssues(context, { issues }));
-  result.push(``);
+  const issuesByEvents = deduplicateIssues(events.map((event) => event.issue));
+  result.push(await getReportByIssues(context, { issues: issuesByEvents }));
 
   const hierarchy = buildIssueHierarchy(issues);
   const hierarchyByKeys = new Map<string, JiraIssueHierarchyItem>();
@@ -72,11 +72,14 @@ export async function getUserActivity(
     hierarchyByKeys.set(hierarchyItem.key, hierarchyItem);
   }
 
+  result.push(``);
   result.push(`## Events`);
   result.push(``);
 
   for (const event of events) {
-    result.push(`- task: ${JSON.stringify(event.issue.key)}`);
+    result.push(
+      `- task: ${JSON.stringify(event.issue.key)}. ${event.issue.fields.summary}`,
+    );
     result.push(`  username: ${JSON.stringify(event.username)}`);
     result.push(`  action: ${JSON.stringify(event.action)}`);
     result.push(`  from: ${JSON.stringify(event.from)}`);

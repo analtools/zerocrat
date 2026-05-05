@@ -1,6 +1,7 @@
 import { request } from "@analtools/zerocrat-source-utils";
 
 import type { JiraClientContext, JiraIssue } from "../types";
+import { getStateFromContext } from "../utils";
 import { getEpicField } from "./get-epic-field";
 
 export async function search(
@@ -15,6 +16,7 @@ export async function search(
       "epiclink",
       "created",
       "creator",
+      "duedate",
     ],
     expand = ["changelog"],
   }: {
@@ -23,8 +25,9 @@ export async function search(
     expand?: string[];
   },
 ): Promise<JiraIssue[]> {
-  if (context.jiraEpicLinkField === undefined) {
-    context.jiraEpicLinkField = await getEpicField(context);
+  const state = getStateFromContext(context);
+  if (state.jiraEpicLinkField === undefined) {
+    state.jiraEpicLinkField = await getEpicField(context);
   }
   const { jiraHost, jiraToken, debug } = context;
 
@@ -48,7 +51,7 @@ export async function search(
         expand: expand.join(","),
         fields: fields
           .map((field) =>
-            field === "epiclink" ? context.jiraEpicLinkField : field,
+            field === "epiclink" ? state.jiraEpicLinkField : field,
           )
           .filter(Boolean),
       },
@@ -57,14 +60,9 @@ export async function search(
     });
 
     for (const issue of issues) {
-      if (
-        context.jiraEpicLinkField &&
-        context.jiraEpicLinkField in issue.fields
-      ) {
-        issue.fields.epiclink = (issue.fields as any)[
-          context.jiraEpicLinkField!
-        ];
-        delete (issue.fields as any)[context.jiraEpicLinkField!];
+      if (state.jiraEpicLinkField && state.jiraEpicLinkField in issue.fields) {
+        issue.fields.epiclink = (issue.fields as any)[state.jiraEpicLinkField!];
+        delete (issue.fields as any)[state.jiraEpicLinkField!];
       }
 
       result.push(issue);

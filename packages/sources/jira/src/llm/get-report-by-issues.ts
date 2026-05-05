@@ -29,6 +29,7 @@ export async function getReportByIssues(
     type,
     name,
     description,
+    dueDate,
     parent,
     allParents,
     ancestors,
@@ -36,9 +37,12 @@ export async function getReportByIssues(
     depth,
   } of hierarchy) {
     result.push(`- task: ${JSON.stringify(key)}`);
-    result.push(`  type: ${JSON.stringify(type)}`);
     result.push(`  name: ${JSON.stringify(name)}`);
+    result.push(`  type: ${JSON.stringify(type)}`);
     result.push(`  description: ${JSON.stringify(description)}`);
+    if (dueDate) {
+      result.push(`  dueDate: ${JSON.stringify(dueDate)}`);
+    }
     result.push(`  parent: ${JSON.stringify(parent)}`);
     result.push(`  allParents: ${JSON.stringify(allParents)}`);
     result.push(`  ancestors: ${JSON.stringify(ancestors)}`);

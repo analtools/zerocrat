@@ -46,6 +46,26 @@ async function fetchIssues(
         .join(",")})`,
     );
   }
+  if (options.actor || (options.actors && options.actors.length > 0)) {
+    const actors = options.actor ? [options.actor] : options.actors!;
+    const actorsQuery: string[] = [];
+    actorsQuery.push(
+      `creator IN (${Array.from(new Set(actors))
+        .map((actor) => `"${actor}"`)
+        .join(",")})`,
+    );
+    actorsQuery.push(
+      `assignee WAS IN (${Array.from(new Set(actors))
+        .map((actor) => `"${actor}"`)
+        .join(",")})`,
+    );
+    actorsQuery.push(
+      `status CHANGED BY (${Array.from(new Set(actors))
+        .map((actor) => `"${actor}"`)
+        .join(",")})`,
+    );
+    queries.push(`(${actorsQuery.join(" OR ")})`);
+  }
 
   if (options.epicLink) {
     queries.push(`"Epic Link" = "${options.epicLink}"`);
