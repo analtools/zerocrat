@@ -5,3 +5,4 @@ packages/*/src
 .prettierignore
 vitest.config.unit.mts
 vitest.config.e2e.mts
+/.yarn/install-state.gz

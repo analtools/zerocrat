@@ -51,8 +51,7 @@
       "eslint --fix"
     ],
     "*.css": [
-      "prettier --write",
-      "stylelint --formatter=verbose --fix"
+      "prettier --write"
     ]
   },
   "workspaces": [
