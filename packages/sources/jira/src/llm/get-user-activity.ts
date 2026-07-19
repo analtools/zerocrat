@@ -6,7 +6,11 @@ import type {
   JiraIssueHierarchyItem,
   SmartSearchOptions,
 } from "../types";
-import { buildIssueHierarchy, deduplicateIssues } from "../utils";
+import {
+  buildIssueHierarchy,
+  deduplicateIssues,
+  diffWordsPaired,
+} from "../utils";
 import { getReportByIssues } from "./get-report-by-issues";
 
 export async function getUserActivity(
@@ -77,20 +81,24 @@ export async function getUserActivity(
   result.push(``);
 
   for (const event of events) {
-    result.push(
-      `- task: ${JSON.stringify(event.issue.key)}. ${event.issue.fields.summary}`,
-    );
-    result.push(`  username: ${JSON.stringify(event.username)}`);
-    result.push(`  action: ${JSON.stringify(event.action)}`);
-    result.push(`  from: ${JSON.stringify(event.from)}`);
-    result.push(`  to: ${JSON.stringify(event.to)}`);
-    result.push(`  date: ${JSON.stringify(event.date)}`);
+    result.push(`- task: ${event.issue.key}. ${event.issue.fields.summary}`);
+    result.push(`  username: ${event.username}`);
+    result.push(`  action: ${event.action}`);
+    if (event.action === "Description updated") {
+      result.push(
+        `  diff: ${JSON.stringify(diffWordsPaired(event.from ?? "", event.to ?? ""))}`,
+      );
+    } else if (event.from == null && event.to != null) {
+      result.push(`  newValue: ${event.to}`);
+    } else {
+      result.push(`  from: ${event.from}`);
+      result.push(`  to: ${event.to}`);
+    }
+    result.push(`  date: ${event.date.toISOString()}`);
     result.push(``);
+    result.push(`  parent: ${hierarchyByKeys.get(event.issue.key)?.parent}`);
     result.push(
-      `  parent: ${JSON.stringify(hierarchyByKeys.get(event.issue.key)?.parent)}`,
-    );
-    result.push(
-      `  ancestors: ${JSON.stringify(hierarchyByKeys.get(event.issue.key)?.ancestors)}`,
+      `  ancestors: ${hierarchyByKeys.get(event.issue.key)?.ancestors}`,
     );
     result.push(`  path: ${hierarchyByKeys.get(event.issue.key)?.path}`);
     result.push(``);
