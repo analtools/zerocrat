@@ -6,6 +6,7 @@ import { unified } from "unified";
 
 import type { ConfluenceApiContext } from "../types";
 import { rehypeAcRef } from "./rehype-plugins/rehype-ac-ref";
+import { rehypeConfluenceTasks } from "./rehype-plugins/rehype-checkboxes";
 import { rehypeJiraMacroSimplifier } from "./rehype-plugins/rehype-jira-macro-simplifier";
 
 export async function htmlToMd(
@@ -20,9 +21,17 @@ export async function htmlToMd(
     .use(rehypeParse, { fragment: true })
     .use(rehypeAcRef(refs))
     .use(rehypeJiraMacroSimplifier(context))
+    .use(rehypeConfluenceTasks)
     .use(rehypeRemark)
-    .use(remarkGfm)
-    .use(remarkStringify)
+    .use(remarkGfm, {
+      tablePipeAlign: false,
+      tableCellPadding: true,
+    })
+    .use(remarkStringify, {
+      bullet: "-",
+      rule: "-",
+      listItemIndent: "one",
+    })
     .process(html);
 
   return {
