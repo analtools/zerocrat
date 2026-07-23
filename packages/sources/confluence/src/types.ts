@@ -39,8 +39,7 @@ export type ConfluenceSearchSimpleResult = {
   title: ConfluenceSearchResult["title"];
   parentContainerTitle: ConfluenceSearchResultResultContainer["title"] | null;
   parentContainerUrl:
-    | ConfluenceSearchResultResultContainer["displayUrl"]
-    | null;
+    ConfluenceSearchResultResultContainer["displayUrl"] | null;
   namespaceTitle: ConfluenceSearchResultResultContainer["title"];
   namespaceUrl: ConfluenceSearchResultResultContainer["displayUrl"];
   date: Date;

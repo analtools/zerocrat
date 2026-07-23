@@ -15,8 +15,7 @@ const jiraRegex = /\b[A-Z][A-Z0-9]+-\d+\b/g;
 export async function getUserActivity(
   context: GitlabApiContext,
   options: (
-    | { username: string; userId?: never }
-    | { username?: never; userId: number }
+    { username: string; userId?: never } | { username?: never; userId: number }
   ) & {
     fromDate?: Date;
     toDate?: Date;

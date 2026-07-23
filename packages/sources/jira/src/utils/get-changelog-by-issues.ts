@@ -20,19 +20,17 @@ export function getChangelogByIssues(issues: JiraIssue[]): JiraChangelogItem[] {
     .flat();
 
   issues
-    .map(
-      (issue): JiraChangelogItem => ({
-        username: issue.fields.creator.name,
-        date: new Date(issue.fields.created),
-        issue,
-        field: "issue",
-        fieldtype: "issue",
-        from: null,
-        fromString: null,
-        to: issue.key,
-        toString: issue.key,
-      }),
-    )
+    .map((issue): JiraChangelogItem => ({
+      username: issue.fields.creator.name,
+      date: new Date(issue.fields.created),
+      issue,
+      field: "issue",
+      fieldtype: "issue",
+      from: null,
+      fromString: null,
+      to: issue.key,
+      toString: issue.key,
+    }))
     .forEach((event) => events.unshift(event));
 
   const authorsByJiraUser = new Map<string, JiraUser>();
