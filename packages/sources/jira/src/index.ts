@@ -6,8 +6,8 @@ export * as api from "./api";
 export * as llm from "./llm";
 export * from "./types";
 
-export const createJiraClient = (context: JiraClientContext) =>
-  ({
+export function createJiraClient(context: JiraClientContext) {
+  return {
     api: {
       getEpicField: api.getEpicField.bind(null, context),
       getIssuesWithParents: api.getIssuesWithParents.bind(null, context),
@@ -20,7 +20,9 @@ export const createJiraClient = (context: JiraClientContext) =>
       getReportByIssues: llm.getReportByIssues.bind(null, context),
       getUserActivity: llm.getUserActivity.bind(null, context),
     },
-  }) satisfies {
+  } as const satisfies {
     api: Record<keyof typeof api, unknown>;
     llm: Record<keyof typeof llm, unknown>;
   };
+}
+export type JiraClient = ReturnType<typeof createJiraClient>;

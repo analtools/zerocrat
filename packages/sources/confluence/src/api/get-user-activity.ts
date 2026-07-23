@@ -1,9 +1,10 @@
+import { formatDate } from "@analtools/zerocrat-source-utils";
+
 import * as api from "../api";
 import type {
   ConfluenceApiContext,
   ConfluenceSearchSimpleResult,
 } from "../types";
-import { formatDate } from "../utils";
 
 export async function getUserActivity(
   context: ConfluenceApiContext,

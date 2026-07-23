@@ -1,0 +1,49 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`prettyDate - 2026-04-27T12:00:00Z > should return the date of the last Monday 1`] = `2026-04-20T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-27T12:00:00Z > should return the date of the last Tuesday 1`] = `2026-04-21T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-27T12:00:00Z > should return the start of the current day 1`] = `2026-04-27T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-27T12:00:00Z > should return the start of the current month 1`] = `2026-04-01T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-27T12:00:00Z > should return the start of the current quarter 1`] = `2026-04-01T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-27T12:00:00Z > should return the start of the current week (Monday) 1`] = `2026-04-27T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-27T12:00:00Z > should return the start of the current year 1`] = `2026-01-01T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-27T12:00:00Z > should return the start of the previous day 1`] = `2026-04-26T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-27T12:00:00Z > should return the start of the previous month 1`] = `2026-03-01T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-27T12:00:00Z > should return the start of the previous quarter 1`] = `2026-01-01T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-27T12:00:00Z > should return the start of the previous week 1`] = `2026-04-20T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-27T12:00:00Z > should return the start of the previous year 1`] = `2025-01-01T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-29T12:00:00Z > should return the date of the last Monday 1`] = `2026-04-27T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-29T12:00:00Z > should return the date of the last Tuesday 1`] = `2026-04-28T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-29T12:00:00Z > should return the start of the current day 1`] = `2026-04-29T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-29T12:00:00Z > should return the start of the current month 1`] = `2026-04-01T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-29T12:00:00Z > should return the start of the current quarter 1`] = `2026-04-01T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-29T12:00:00Z > should return the start of the current week (Monday) 1`] = `2026-04-27T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-29T12:00:00Z > should return the start of the current year 1`] = `2026-01-01T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-29T12:00:00Z > should return the start of the previous day 1`] = `2026-04-28T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-29T12:00:00Z > should return the start of the previous month 1`] = `2026-03-01T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-29T12:00:00Z > should return the start of the previous quarter 1`] = `2026-01-01T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-29T12:00:00Z > should return the start of the previous week 1`] = `2026-04-20T00:00:00.000Z`;
+
+exports[`prettyDate - 2026-04-29T12:00:00Z > should return the start of the previous year 1`] = `2025-01-01T00:00:00.000Z`;

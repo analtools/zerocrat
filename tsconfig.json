@@ -4,6 +4,7 @@
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "sourceMap": true,
     "lib": ["ESNext"],
     "types": ["node"],
     "skipLibCheck": true,

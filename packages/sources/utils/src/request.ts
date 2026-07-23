@@ -1,5 +1,4 @@
 import { type IStringifyBaseOptions, stringify } from "qs";
-import { type BodyInit, FormData, Headers, type HeadersInit } from "undici";
 
 import { limitedFetch } from "./limited-fetch";
 
@@ -25,7 +24,7 @@ export async function request<T = any>(options: {
     console.log(`[${options.method.toUpperCase()}] ${url}`);
   }
 
-  const body: BodyInit | undefined =
+  const body =
     options?.body == null || options?.body instanceof FormData
       ? options?.body
       : JSON.stringify(options.body);
@@ -33,7 +32,7 @@ export async function request<T = any>(options: {
     console.log("BODY:", body);
   }
 
-  const additionalHeaders: HeadersInit =
+  const additionalHeaders =
     body instanceof FormData
       ? {}
       : {

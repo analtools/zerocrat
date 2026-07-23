@@ -1,8 +1,11 @@
 export type JiraClientContext = {
   jiraHost: string;
   jiraToken: string;
-  jiraEpicLinkField?: string | null;
   debug?: boolean;
+};
+
+export type JiraClientContextState = {
+  jiraEpicLinkField?: string | null;
 };
 
 export type JiraIssue = {
@@ -18,6 +21,7 @@ export type JiraIssue = {
       inwardIssue?: { id: string; key: string };
     }>;
     issuetype: { name: string };
+    duedate?: string | null;
     created: string;
     creator: { name: string };
   };
@@ -65,6 +69,16 @@ export type SmartSearchOptions = {
   fields?: string[];
   expand?: string[];
 } & { keys?: string[] } & (
+    | {
+        actor?: string;
+        actors?: never;
+      }
+    | {
+        actor?: never;
+        actors?: string[];
+      }
+  ) &
+  (
     | {
         project?: string;
         projects?: never;
@@ -168,6 +182,7 @@ export type JiraIssueHierarchyItem = {
   type: string;
   name: string;
   description: string;
+  dueDate: string | null;
   parent: string | null;
   allParents: string[];
   ancestors: string[];

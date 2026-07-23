@@ -29,19 +29,23 @@ export async function getReportByIssues(
     type,
     name,
     description,
+    dueDate,
     parent,
     allParents,
     ancestors,
     path,
     depth,
   } of hierarchy) {
-    result.push(`- task: ${JSON.stringify(key)}`);
-    result.push(`  type: ${JSON.stringify(type)}`);
-    result.push(`  name: ${JSON.stringify(name)}`);
+    result.push(`- task: ${key}`);
+    result.push(`  name: ${name}`);
+    result.push(`  type: ${type}`);
     result.push(`  description: ${JSON.stringify(description)}`);
-    result.push(`  parent: ${JSON.stringify(parent)}`);
-    result.push(`  allParents: ${JSON.stringify(allParents)}`);
-    result.push(`  ancestors: ${JSON.stringify(ancestors)}`);
+    if (dueDate) {
+      result.push(`  dueDate: ${JSON.stringify(dueDate)}`);
+    }
+    result.push(`  parent: ${parent}`);
+    result.push(`  allParents: ${allParents}`);
+    result.push(`  ancestors: ${ancestors}`);
     result.push(`  path: ${path}`);
     result.push(`  depth: ${depth}`);
     result.push(``);

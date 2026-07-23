@@ -23,51 +23,58 @@ export async function getUserActivity(
   );
   result.push(``);
   result.push(`CONFLUENCE_HOST = ${context.confluenceHost!}`);
+
+  result.push(``);
+  result.push(`## Events`);
   result.push(``);
 
-  for (const event of events) {
-    const spaceLink =
-      event.namespaceTitle && event.namespaceUrl
-        ? `[${event.namespaceTitle}](${event.namespaceUrl})`
-        : "Неизвестное пространство";
+  if (events.length === 0) {
+    result.push(`No events found`);
+  } else {
+    for (const event of events) {
+      const spaceLink =
+        event.namespaceTitle && event.namespaceUrl
+          ? `[${event.namespaceTitle}](${event.namespaceUrl})`
+          : "Неизвестное пространство";
 
-    const pageLink =
-      event.parentContainerTitle && event.parentContainerUrl
-        ? `[${event.parentContainerTitle}](${event.parentContainerUrl})`
-        : "Неизвествная страница";
+      const pageLink =
+        event.parentContainerTitle && event.parentContainerUrl
+          ? `[${event.parentContainerTitle}](${event.parentContainerUrl})`
+          : "Неизвествная страница";
 
-    const documentTitle = `${spaceLink} / ${pageLink}`;
+      const documentTitle = `${spaceLink} / ${pageLink}`;
 
-    const isoDate = event.date.toISOString();
+      const isoDate = event.date.toISOString();
 
-    if (event.type === "attachment") {
-      const fileCategory = getFileCategory(event.title);
-      const categoryText =
-        fileCategory === "файл" ? "вложение" : `вложение (${fileCategory})`;
-      result.push(
-        `📎 @${username} добавил ${categoryText} "${event.title}" к документу "${documentTitle}" (${isoDate})`,
-      );
-    } else if (event.type === "comment") {
-      // Берём текст комментария из excerpt, чистим и обрезаем
-      let commentText = event.excerpt ? event.excerpt.trim() : "Без текста.";
-      if (!commentText) commentText = "Без текста.";
+      if (event.type === "attachment") {
+        const fileCategory = getFileCategory(event.title);
+        const categoryText =
+          fileCategory === "файл" ? "вложение" : `вложение (${fileCategory})`;
+        result.push(
+          `📎 @${username} добавил ${categoryText} "${event.title}" к документу "${documentTitle}" (${isoDate})`,
+        );
+      } else if (event.type === "comment") {
+        // Берём текст комментария из excerpt, чистим и обрезаем
+        let commentText = event.excerpt ? event.excerpt.trim() : "Без текста.";
+        if (!commentText) commentText = "Без текста.";
 
-      // Заменяем переносы на пробелы, убираем лишние пробелы
-      commentText = commentText.replace(/\s+/g, " ");
+        // Заменяем переносы на пробелы, убираем лишние пробелы
+        commentText = commentText.replace(/\s+/g, " ");
 
-      result.push(
-        `💬 @${username} оставил комментарий: "${commentText}" к документу "💬 ${documentTitle}" (${isoDate})`,
-      );
-    } else if (event.type === "page") {
-      result.push(
-        `📄 @${username} создал документ "${event.title}" (${isoDate})`,
-      );
-    } else {
-      result.push(
-        `⚡ @${username} выполнил действие "${event.title}" к документу "${documentTitle}" (${isoDate})`,
-      );
+        result.push(
+          `💬 @${username} оставил комментарий: "${commentText}" к документу "💬 ${documentTitle}" (${isoDate})`,
+        );
+      } else if (event.type === "page") {
+        result.push(
+          `📄 @${username} создал документ "${event.title}" (${isoDate})`,
+        );
+      } else {
+        result.push(
+          `⚡ @${username} выполнил действие "${event.title}" к документу "${documentTitle}" (${isoDate})`,
+        );
+      }
+      result.push(``);
     }
-    result.push(``);
   }
   return result.join("\n").trim();
 }

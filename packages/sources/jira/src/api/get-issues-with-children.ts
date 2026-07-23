@@ -17,7 +17,7 @@ export async function getIssuesWithChildren(
   const issues =
     options.issues ??
     (await smartSearch(context, {
-      keys: Array.from(new Set(options.keys)),
+      keys: options.keys,
     }));
 
   if (issues.length === 0) {
@@ -26,16 +26,9 @@ export async function getIssuesWithChildren(
 
   const taskKeys = issues.map((issue) => issue.key);
 
-  const subTaskKeys = Array.from(
-    new Set(issues.map((issue) => getIssueChildrenKeys(issue)).flat()),
-  );
-
-  const subTasks =
-    subTaskKeys.length > 0
-      ? await smartSearch(context, {
-          keys: subTaskKeys,
-        })
-      : [];
+  const subTasks = await smartSearch(context, {
+    keys: issues.map((issue) => getIssueChildrenKeys(issue)).flat(),
+  });
 
   const epicChildren = await smartSearch(context, {
     epicLinks: taskKeys,

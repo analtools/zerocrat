@@ -37,9 +37,13 @@ export async function search(
     });
     for (const item of items) {
       result.push({
-        id: item.content.id,
-        type: item.content.type,
-        additionalUrl: `${confluenceHost}${item.content._links.webui}`,
+        id:
+          item.content?.id ??
+          `${Date.now}${Math.round(Math.random() * 1000000)}`,
+        type: item.content?.type ?? "other",
+        additionalUrl: item.content
+          ? `${confluenceHost}${item.content._links.webui}`
+          : "",
         excerpt: item.excerpt === "" ? null : item.excerpt,
         url: `${confluenceHost}${item.url}`,
         title: item.title,

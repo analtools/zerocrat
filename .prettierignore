@@ -9,3 +9,4 @@
 dist
 coverage
 
+/.yarn/install-state.gz

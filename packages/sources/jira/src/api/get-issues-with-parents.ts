@@ -24,22 +24,18 @@ export async function getIssuesWithParents(
     return [];
   }
 
-  const uniqueEpicKeys = new Set(issues.map((issue) => issue.fields.epiclink));
-  const uniqueEpicKeysAsArray = Array.from(uniqueEpicKeys).filter(
-    Boolean,
-  ) as string[];
+  const epicLinks = issues
+    .map((issue) => issue.fields.epiclink)
+    .filter(Boolean) as string[];
 
   const epics = await smartSearch(context, {
-    keys: uniqueEpicKeysAsArray,
+    keys: epicLinks,
   });
 
   const parentKeys = issues.map((issue) => getIssueParentKeys(issue)).flat();
 
-  const uniqueParentKeys = new Set(parentKeys);
-  const uniqueParentKeysAsArray = Array.from(uniqueParentKeys);
-
   const parents = await smartSearch(context, {
-    keys: uniqueParentKeysAsArray,
+    keys: parentKeys,
   });
 
   return [

@@ -79,15 +79,14 @@ export function buildIssueHierarchy(
 
     const type = issue.fields.issuetype.name;
 
-    const path = [...ancestors.slice().reverse(), issue.key]
-      .map((key) => JSON.stringify(key))
-      .join(" > ");
+    const path = [...ancestors.slice().reverse(), issue.key].join(" > ");
 
     result.push({
       key: issue.key,
       type,
       name: issue.fields.summary,
       description: issue.fields.description,
+      dueDate: issue.fields.duedate ?? null,
       parent,
       allParents,
       ancestors,

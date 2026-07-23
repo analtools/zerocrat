@@ -44,7 +44,9 @@ export async function getPage(
       refs,
     });
 
-    result.push(`# Comments\n\n${comments}`);
+    if (comments) {
+      result.push(`# Comments\n\n${comments}`);
+    }
   }
 
   return result.join("\n---\n\n");
