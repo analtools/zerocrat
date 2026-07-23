@@ -1,10 +1,5 @@
 type FileCategory =
-  | "изображение"
-  | "документ"
-  | "архив"
-  | "аудио"
-  | "видео"
-  | "файл";
+  "изображение" | "документ" | "архив" | "аудио" | "видео" | "файл";
 
 export function getFileCategory(filename: string): FileCategory {
   const ext = filename.toLowerCase().split(".").pop() || "";

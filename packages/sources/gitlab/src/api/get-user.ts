@@ -8,8 +8,7 @@ export async function getUser(
     username,
     userId,
   }:
-    | { username: string; userId?: never }
-    | { username?: never; userId: number },
+    { username: string; userId?: never } | { username?: never; userId: number },
 ): Promise<GitLabUser | null> {
   let users: [
     {
