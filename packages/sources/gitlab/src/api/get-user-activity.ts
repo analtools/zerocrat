@@ -37,7 +37,7 @@ export async function getUserActivity(
 
   const { fromDate, toDate } = options;
 
-  let events: UserActivityEvent[] = [];
+  let events: UserActivityEvent[];
 
   const perPage = 20;
   let page = 1;
