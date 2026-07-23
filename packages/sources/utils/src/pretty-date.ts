@@ -1,6 +1,10 @@
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
 
-const TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+const TIME_ZONE =
+  (typeof process !== "undefined" && process.env?.TZ) ||
+  Intl.DateTimeFormat().resolvedOptions().timeZone ||
+  "UTC";
+
 const CURRENT_DAY = {
   "current day": true,
   today: true,

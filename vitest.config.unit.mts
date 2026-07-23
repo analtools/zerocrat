@@ -18,6 +18,9 @@ export default defineConfig({
       "**/dist/**/*",
       "node_modules/**/*",
       "**/node_modules/**/*",
-    ]
+    ],
+    env: {
+      TZ: "UTC",
+    },
   },
 });
