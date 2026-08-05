@@ -6,22 +6,34 @@ import { buildIssueHierarchy } from "./utils";
 
 describe("Jira E2E", () => {
   const {
-    JIRA_HOST: jiraHost,
-    JIRA_TOKEN: jiraToken,
+    JIRA_HOST_1: jiraHost1,
+    JIRA_TOKEN_1: jiraToken1,
+    JIRA_HOST_2: jiraHost2,
+    JIRA_TOKEN_2: jiraToken2,
     JIRA_TEST_USERNAME: username,
     JIRA_TEST_PROJECT: project,
     JIRA_TEST_TASK_KEY: taskKey,
     JIRA_TEST_EPIC_KEY: epicKey,
+    JIRA_PUBLIC_HOST: publicJiraHost,
   } = process.env;
 
-  assert(jiraHost);
-  assert(jiraToken);
+  assert(jiraHost1);
+  assert(jiraToken1);
+  assert(jiraHost2);
+  assert(jiraToken2);
   assert(username);
   assert(project);
   assert(taskKey);
   assert(epicKey);
 
-  const client = createJiraClient({ jiraHost, jiraToken, debug: false });
+  const client = createJiraClient({
+    servers: [
+      { host: jiraHost1, token: jiraToken1 },
+      { host: jiraHost2, token: jiraToken2 },
+    ],
+    publicHost: publicJiraHost,
+    debug: false,
+  });
 
   it("llm.getUserActivity", async () => {
     const report = await client.llm.getUserActivity({
@@ -57,9 +69,52 @@ describe("Jira E2E", () => {
     console.log(JSON.stringify(items, null, 2));
   });
 
+  it("api.getPlannedEndField", async () => {
+    const servers = client.api.getServers();
+    const result = await Promise.all(
+      servers.map((server) =>
+        client.api
+          .getPlannedEndField(server)
+          .then((field) => ({ host: server.host, field })),
+      ),
+    );
+    console.log(result);
+  });
+
   it("api.getEpicField", async () => {
-    const field = await client.api.getEpicField();
-    console.log(field);
+    const servers = client.api.getServers();
+    const result = await Promise.all(
+      servers.map((server) =>
+        client.api
+          .getEpicField(server)
+          .then((field) => ({ host: server.host, field })),
+      ),
+    );
+    console.log(result);
+  });
+
+  it("api.getInitiativeClassificationField", async () => {
+    const servers = client.api.getServers();
+    const result = await Promise.all(
+      servers.map((server) =>
+        client.api
+          .getInitiativeClassificationField(server)
+          .then((field) => ({ host: server.host, field })),
+      ),
+    );
+    console.log(result);
+  });
+
+  it("api.getChangeTypeField", async () => {
+    const servers = client.api.getServers();
+    const result = await Promise.all(
+      servers.map((server) =>
+        client.api
+          .getChangeTypeField(server)
+          .then((field) => ({ host: server.host, field })),
+      ),
+    );
+    console.log(result);
   });
 
   it("api.getIssuesWithParents", async () => {
