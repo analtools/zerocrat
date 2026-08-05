@@ -1,13 +1,13 @@
-import type { JiraClient } from "@analtools/zerocrat-source-jira";
+import type {
+  JiraClient,
+  JiraServerSettings,
+} from "@analtools/zerocrat-source-jira";
 
 export type GitlabApiContext = {
   gitlabHost: string;
   gitlabToken: string;
   debug?: boolean;
-} & (
-  | { jiraHost: string; jiraToken: string }
-  | { jiraHost?: never; jiraToken?: never }
-);
+} & { jiraServers?: JiraServerSettings[]; publicJiraHost?: string };
 
 export type GitlabApiContextState = {
   jiraClient?: JiraClient;

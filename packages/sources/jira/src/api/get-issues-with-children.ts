@@ -1,5 +1,5 @@
 import type { JiraClientContext, JiraIssue } from "../types";
-import { getIssueChildrenKeys } from "../utils";
+import { deduplicateIssues, getIssueChildrenKeys } from "../utils";
 import { smartSearch } from "./smart-search";
 
 export async function getIssuesWithChildren(
@@ -40,10 +40,10 @@ export async function getIssuesWithChildren(
     return issues;
   }
 
-  return [
+  return deduplicateIssues([
     ...issues,
     ...(await getIssuesWithChildren(context, {
       issues: allChildren,
     })),
-  ];
+  ]);
 }

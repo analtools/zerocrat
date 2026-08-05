@@ -75,7 +75,7 @@ export function buildIssueHierarchy(
     const parent = resolvePrimaryParent(allParents);
 
     const ancestors = getAncestors(map, ancestorsCache, issue.key);
-    const depth = ancestors.length;
+    const depth = ancestors.length + 1;
 
     const type = issue.fields.issuetype.name;
 
@@ -84,9 +84,15 @@ export function buildIssueHierarchy(
     result.push({
       key: issue.key,
       type,
+      status: issue.fields.status.name,
       name: issue.fields.summary,
       description: issue.fields.description,
+      assignee: issue.fields.assignee?.name ?? null,
       dueDate: issue.fields.duedate ?? null,
+      plannedEnd: issue.fields.plannedEnd ?? null,
+      epic: issue.fields.epiclink ?? null,
+      initiativeClassification: issue.fields.initiativeClassification ?? null,
+      changeType: issue.fields.changeType ?? null,
       parent,
       allParents,
       ancestors,

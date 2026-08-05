@@ -1,5 +1,9 @@
 import type { JiraClientContext, JiraIssue } from "../types";
-import { getIssueParentKeys } from "../utils";
+import {
+  deduplicateIssues,
+  getIssueChildrenKeys,
+  getIssueParentKeys,
+} from "../utils";
 import { smartSearch } from "./smart-search";
 
 export async function getIssuesWithParents(
@@ -24,6 +28,8 @@ export async function getIssuesWithParents(
     return [];
   }
 
+  const keys = issues.map(({ key }) => key);
+
   const epicLinks = issues
     .map((issue) => issue.fields.epiclink)
     .filter(Boolean) as string[];
@@ -34,14 +40,18 @@ export async function getIssuesWithParents(
 
   const parentKeys = issues.map((issue) => getIssueParentKeys(issue)).flat();
 
-  const parents = await smartSearch(context, {
-    keys: parentKeys,
-  });
+  const parents = (
+    await smartSearch(context, {
+      keys: parentKeys,
+    })
+  ).filter((issue) =>
+    getIssueChildrenKeys(issue).some((key) => keys.includes(key)),
+  );
 
-  return [
+  return deduplicateIssues([
     ...issues,
     ...(await getIssuesWithParents(context, {
       issues: [...epics, ...parents],
     })),
-  ];
+  ]);
 }

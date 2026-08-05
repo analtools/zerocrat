@@ -1,7 +1,14 @@
 import type { JiraClientContext, JiraServerSettings } from "../types";
 import { resolveCustomFields } from "./resolve-custom-fields";
 
-export async function getEpicField(
+const plannedEndFieldNames = [
+  "Planned End",
+  "Planned end",
+  "Target End",
+  "Finish Date",
+];
+
+export async function getPlannedEndField(
   context: JiraClientContext,
   server: JiraServerSettings,
 ): Promise<string | null> {
@@ -9,7 +16,9 @@ export async function getEpicField(
 
   const [fieldId] = customFields
     .entries()
-    .find(([, fieldName]) => fieldName === "Epic Link") ?? [null];
+    .find(([, fieldName]) => plannedEndFieldNames.includes(fieldName)) ?? [
+    null,
+  ];
 
   return fieldId;
 }

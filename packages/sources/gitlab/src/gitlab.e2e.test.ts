@@ -5,8 +5,11 @@ import { createGitlabClient } from ".";
 
 describe("Gitlab E2E", () => {
   const {
-    JIRA_TOKEN: jiraToken,
-    JIRA_HOST: jiraHost,
+    JIRA_HOST_1: jiraHost1,
+    JIRA_TOKEN_1: jiraToken1,
+    JIRA_HOST_2: jiraHost2,
+    JIRA_TOKEN_2: jiraToken2,
+    JIRA_PUBLIC_HOST: publicJiraHost,
     GITLAB_TOKEN: gitlabToken,
     GITLAB_HOST: gitlabHost,
     GITLAB_TEST_USERNAME: username,
@@ -16,8 +19,11 @@ describe("Gitlab E2E", () => {
     GITLAB_TEST_MR_ID: mergeRequestIdAsString,
   } = process.env;
 
-  assert(jiraToken);
-  assert(jiraHost);
+  assert(jiraHost1);
+  assert(jiraToken1);
+  assert(jiraHost2);
+  assert(jiraToken2);
+  assert(publicJiraHost);
   assert(gitlabToken);
   assert(gitlabHost);
   assert(username);
@@ -34,8 +40,11 @@ describe("Gitlab E2E", () => {
   const { api, llm } = createGitlabClient({
     gitlabHost,
     gitlabToken,
-    jiraHost,
-    jiraToken,
+    jiraServers: [
+      { host: jiraHost1, token: jiraToken1 },
+      { host: jiraHost2, token: jiraToken2 },
+    ],
+    publicJiraHost,
   });
 
   it("api.getNamespaces", async () => {

@@ -10,6 +10,7 @@ import {
   buildIssueHierarchy,
   deduplicateIssues,
   diffWordsPaired,
+  getPublicJiraHost,
 } from "../utils";
 import { getReportByIssues } from "./get-report-by-issues";
 
@@ -29,45 +30,56 @@ export async function getUserActivity(
         }
     ),
 ) {
-  let issues = await api.smartSearch(context, options);
+  const issues = await api.smartSearch(context, options);
 
   const result: string[] = [];
 
-  const usernames =
-    (options.username ? [options.username] : options.usernames)?.map(
-      (username) => `@${username}`,
-    ) ?? [];
+  const usernames = Array.from(
+    new Set([
+      ...((options.username ? [options.username] : options.usernames) ?? []),
+      ...((options.actor ? [options.actor] : options.actors) ?? []),
+    ]),
+  );
+
+  const displayUsernames = usernames
+    .map((username) => `@${username}`)
+    .join(",");
+
+  const events = await api.getUserActivity(context, {
+    keys: issues.map((issue) => issue.key),
+    usernames,
+  });
+
+  result.push(
+    `# Jira Activity${displayUsernames ? ` - ${displayUsernames}` : ""} - ${options.fromDate ? `from ${formatDate(options.fromDate)} ` : ""}to ${formatDate(options.toDate ?? new Date())}`,
+  );
+  result.push(``);
+
+  result.push(
+    `JIRA_HOST = ${getPublicJiraHost(context.servers, context.publicHost)}`,
+  );
+  result.push(``);
+
+  const issuesByEventsOriginal = deduplicateIssues(
+    events.map((event) => event.issue),
+  );
+  let issuesByEvents = issuesByEventsOriginal;
 
   if (options.withParents) {
     const issueWithParents = await api.getIssuesWithParents(context, {
-      issues,
+      issues: issuesByEventsOriginal,
     });
-    issues = deduplicateIssues(issueWithParents);
+    issuesByEvents.push(...issueWithParents);
   }
 
   if (options.withChildren) {
     const issuesWithChildren = await api.getIssuesWithChildren(context, {
-      issues,
+      issues: issuesByEventsOriginal,
     });
-    issues = deduplicateIssues(issuesWithChildren);
+    issuesByEvents.push(...issuesWithChildren);
   }
+  issuesByEvents = deduplicateIssues(issuesByEvents);
 
-  const events = await api.getUserActivity(context, {
-    keys: issues.map((issue) => issue.key),
-    ...(options.usernames
-      ? { usernames: options.usernames }
-      : { username: options.username }),
-  });
-
-  result.push(
-    `# Jira Activity - ${usernames.join(",")} - ${options.fromDate ? `from ${formatDate(options.fromDate)} ` : ""}to ${formatDate(options.toDate ?? new Date())}`,
-  );
-  result.push(``);
-
-  result.push(`JIRA_HOST = ${context.jiraHost}`);
-  result.push(``);
-
-  const issuesByEvents = deduplicateIssues(events.map((event) => event.issue));
   result.push(await getReportByIssues(context, { issues: issuesByEvents }));
 
   const hierarchy = buildIssueHierarchy(issues);
@@ -77,6 +89,11 @@ export async function getUserActivity(
   }
 
   result.push(``);
+
+  if (!events.length) {
+    return "";
+  }
+
   result.push(`## Events`);
   result.push(``);
 
@@ -88,19 +105,14 @@ export async function getUserActivity(
       result.push(
         `  diff: ${JSON.stringify(diffWordsPaired(event.from ?? "", event.to ?? ""))}`,
       );
-    } else if (event.from == null && event.to != null) {
-      result.push(`  newValue: ${event.to}`);
+    }
+    if (event.from == null && event.to != null) {
+      result.push(`  value: ${event.to}`);
     } else {
-      result.push(`  from: ${event.from}`);
-      result.push(`  to: ${event.to}`);
+      result.push(`  from: ${JSON.stringify(event.from)}`);
+      result.push(`  to: ${JSON.stringify(event.to)}`);
     }
     result.push(`  date: ${event.date.toISOString()}`);
-    result.push(``);
-    result.push(`  parent: ${hierarchyByKeys.get(event.issue.key)?.parent}`);
-    result.push(
-      `  ancestors: ${hierarchyByKeys.get(event.issue.key)?.ancestors}`,
-    );
-    result.push(`  path: ${hierarchyByKeys.get(event.issue.key)?.path}`);
     result.push(``);
   }
 

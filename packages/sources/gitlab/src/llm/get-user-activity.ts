@@ -1,3 +1,7 @@
+import {
+  type JiraIssue,
+  utils as jiraUtils,
+} from "@analtools/zerocrat-source-jira";
 import { formatDate } from "@analtools/zerocrat-source-utils";
 
 import * as api from "../api";
@@ -18,7 +22,7 @@ export async function getUserActivity(
 
   const { events, jiraKeys } = await api.getUserActivity(context, options);
 
-  const issues = jiraClient
+  const issues: JiraIssue[] = jiraClient
     ? await jiraClient.api.getIssuesWithParents({ keys: jiraKeys })
     : [];
 
@@ -33,8 +37,14 @@ export async function getUserActivity(
   result.push(``);
   result.push(`GITLAB_HOST = ${context.gitlabHost!}`);
 
-  if (jiraClient && issues.length > 0) {
-    result.push(`JIRA_HOST = ${context.jiraHost!}`);
+  if (
+    jiraClient &&
+    issues.length > 0 &&
+    ((context.jiraServers?.length ?? 0) > 0 || context.publicJiraHost)
+  ) {
+    result.push(
+      `JIRA_HOST = ${jiraUtils.getPublicJiraHost(context.jiraServers ?? [], context.publicJiraHost)}`,
+    );
     result.push(``);
     result.push(await jiraClient.llm.getReportByIssues({ issues }));
   }
