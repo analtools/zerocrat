@@ -10,12 +10,12 @@ import { createJiraClient } from "@analtools/zerocrat-source-jira";
 import { getStateFromContext } from "./utils";
 
 export function createGitlabClient(context: GitlabApiContext) {
-  if (context.jiraHost && context.jiraToken) {
+  if (context.jiraServers && context.jiraServers.length > 0) {
     const state = getStateFromContext(context);
 
     state.jiraClient = createJiraClient({
-      jiraHost: context.jiraHost,
-      jiraToken: context.jiraToken,
+      servers: context.jiraServers,
+      publicHost: context.publicJiraHost,
       debug: context.debug,
     });
   }
