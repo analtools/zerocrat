@@ -8,6 +8,11 @@
   "dependencies": {
     "@analtools/zerocrat-source-utils": "0.0.0-stub"
   },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "rimraf": "^6.1.3",
+    "typescript": "^6.0.3"
+  },
   "scripts": {
     "build": "rimraf dist && tsc"
   }
