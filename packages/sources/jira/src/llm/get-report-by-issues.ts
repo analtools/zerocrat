@@ -30,24 +30,40 @@ export async function getReportByIssues(
     name,
     description,
     dueDate,
-    parent,
-    allParents,
-    ancestors,
+    plannedEnd,
     path,
     depth,
+    assignee,
+    epic,
+    status,
+    initiativeClassification,
+    changeType,
   } of hierarchy) {
-    result.push(`- task: ${key}`);
-    result.push(`  name: ${name}`);
+    result.push(`- task: ${key}. ${name}`);
+    if (epic) {
+      result.push(`  epic: ${epic}`);
+    }
+    result.push(`  hierarchy: ${path}`);
+    result.push(`  depth: ${depth}`);
+    result.push(`  status: ${status}`);
     result.push(`  type: ${type}`);
-    result.push(`  description: ${JSON.stringify(description)}`);
+    if (initiativeClassification) {
+      result.push(`  initiativeClassification: ${initiativeClassification}`);
+    }
+    if (changeType) {
+      result.push(`  changeType: ${changeType}`);
+    }
+    if (assignee) {
+      result.push(`  assignee: ${assignee}`);
+    }
     if (dueDate) {
       result.push(`  dueDate: ${JSON.stringify(dueDate)}`);
     }
-    result.push(`  parent: ${parent}`);
-    result.push(`  allParents: ${allParents}`);
-    result.push(`  ancestors: ${ancestors}`);
-    result.push(`  path: ${path}`);
-    result.push(`  depth: ${depth}`);
+    if (plannedEnd) {
+      result.push(`  plannedEnd: ${JSON.stringify(plannedEnd)}`);
+    }
+    result.push(`  description: ${JSON.stringify(description)}`);
+
     result.push(``);
   }
 

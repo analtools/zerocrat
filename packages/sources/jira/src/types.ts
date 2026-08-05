@@ -1,11 +1,12 @@
-export type JiraClientContext = {
-  jiraHost: string;
-  jiraToken: string;
-  debug?: boolean;
+export type JiraServerSettings = {
+  host: string;
+  token: string;
 };
 
-export type JiraClientContextState = {
-  jiraEpicLinkField?: string | null;
+export type JiraClientContext = {
+  servers: JiraServerSettings[];
+  publicJiraHost?: string;
+  debug?: boolean;
 };
 
 export type JiraIssue = {
@@ -14,7 +15,8 @@ export type JiraIssue = {
   fields: {
     summary: string;
     description: string;
-    epiclink?: string;
+    status: { name: string };
+    assignee?: { name: string };
     issuelinks: Array<{
       type: { outward?: string; inward?: string };
       outwardIssue?: { id: string; key: string };
@@ -24,6 +26,11 @@ export type JiraIssue = {
     duedate?: string | null;
     created: string;
     creator: { name: string };
+    // TODO: refactor - custom fields
+    plannedEnd?: string | null;
+    epiclink?: string | null;
+    changeType?: string | null;
+    initiativeClassification?: string | null;
   };
   changelog: {
     startAt: number;
@@ -181,11 +188,17 @@ export type JiraIssueHierarchyItem = {
   key: string;
   type: string;
   name: string;
+  status: string;
+  assignee: string | null;
   description: string;
   dueDate: string | null;
+  plannedEnd: string | null;
   parent: string | null;
   allParents: string[];
   ancestors: string[];
   path: string;
   depth: number;
+  epic: string | null;
+  initiativeClassification: string | null;
+  changeType: string | null;
 };

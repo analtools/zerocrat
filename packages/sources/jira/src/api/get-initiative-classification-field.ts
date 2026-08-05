@@ -1,7 +1,7 @@
 import type { JiraClientContext, JiraServerSettings } from "../types";
 import { resolveCustomFields } from "./resolve-custom-fields";
 
-export async function getEpicField(
+export async function getInitiativeClassificationField(
   context: JiraClientContext,
   server: JiraServerSettings,
 ): Promise<string | null> {
@@ -9,7 +9,9 @@ export async function getEpicField(
 
   const [fieldId] = customFields
     .entries()
-    .find(([, fieldName]) => fieldName === "Epic Link") ?? [null];
+    .find(([, fieldName]) => fieldName === "Initiative classification") ?? [
+    null,
+  ];
 
   return fieldId;
 }

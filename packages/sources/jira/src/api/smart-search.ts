@@ -39,6 +39,9 @@ async function fetchIssues(
   if (options.project) {
     queries.push(`project = "${options.project}"`);
   }
+  if (options.status) {
+    queries.push(`status = "${options.status}"`);
+  }
   if (options.projects && options.projects.length > 0) {
     queries.push(
       `project IN (${Array.from(new Set(options.projects))
