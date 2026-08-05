@@ -5,7 +5,7 @@ export type JiraServerSettings = {
 
 export type JiraClientContext = {
   servers: JiraServerSettings[];
-  publicJiraHost?: string;
+  publicHost?: string;
   debug?: boolean;
 };
 

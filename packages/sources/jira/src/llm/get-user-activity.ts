@@ -56,7 +56,7 @@ export async function getUserActivity(
   result.push(``);
 
   result.push(
-    `JIRA_HOST = ${getPublicJiraHost(context.servers, context.publicJiraHost)}`,
+    `JIRA_HOST = ${getPublicJiraHost(context.servers, context.publicHost)}`,
   );
   result.push(``);
 
