@@ -325,6 +325,12 @@ export type GitlabProjectBaseInfo = Pick<
   "id" | "description" | "nameWithNamespace" | "pathWithNamespace"
 >;
 
+export type UserActivityMergeRequestDetails = {
+  mergeRequestId: number;
+  mergeRequestTitle: string;
+  mergeRequestWebUrl: string;
+};
+
 export type UserActivityEvent = (
   | ((
       | {
@@ -355,12 +361,12 @@ export type UserActivityEvent = (
       | {
           action: "closed merge request";
         }
-    ) & { details: { mergeRequestId: number; mergeRequestTitle: string } })
+    ) & {
+      details: UserActivityMergeRequestDetails;
+    })
   | {
       action: "commented on";
-      details: {
-        mergeRequestId: number;
-        mergeRequestTitle: string;
+      details: UserActivityMergeRequestDetails & {
         noteId: number;
         noteBody: string;
         noteableId: number;
