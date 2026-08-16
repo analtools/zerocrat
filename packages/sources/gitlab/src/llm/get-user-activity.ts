@@ -57,10 +57,14 @@ export async function getUserActivity(
     result.push(`No events found`);
   } else {
     for (const event of events) {
-      result.push(
-        `- task: ${JSON.stringify(event.details.jiraKey ? `${event.details.jiraKey}. ${issuesByKey.get(event.details.jiraKey)?.fields.summary ?? ""}` : null)}`,
-      );
-      result.push(`  action: ${JSON.stringify(event.action)}`);
+      if (event.details.jiraKey) {
+        result.push(
+          `- task: ${event.details.jiraKey ? `${event.details.jiraKey}. ${issuesByKey.get(event.details.jiraKey)?.fields.summary ?? ""}` : null}`,
+        );
+        result.push(`  action: ${event.action}`);
+      } else {
+        result.push(`- action: ${event.action}`);
+      }
       result.push(`  date: ${event.date.toISOString()}`);
       for (const key of Object.keys(
         event.details,
@@ -78,11 +82,17 @@ export async function getUserActivity(
             "commitCount",
             "commitFrom",
             "commitTo",
-          ].includes(key)
+          ].includes(key) ||
+          (["commitTitle"].includes(key) && event.details[key] === null)
         ) {
           continue;
         }
-        result.push(`  ${key}: ${JSON.stringify(event.details[key])}`);
+        const value = event.details[key];
+        if (`${value}`.includes("\n")) {
+          result.push(`  ${key}: ${JSON.stringify(value)}`);
+        } else {
+          result.push(`  ${key}: ${value}`);
+        }
       }
       result.push(``);
     }

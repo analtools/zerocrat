@@ -7,6 +7,8 @@ import type {
   UserActivityEvent,
 } from "../types";
 import { TempUniqueItems } from "../utils";
+import { getMergeRequest } from "./get-merge-request";
+import { getMergeRequests } from "./get-merge-requests";
 import { getProject } from "./get-project";
 import { getUser } from "./get-user";
 
@@ -86,16 +88,38 @@ export async function getUserActivity(
         action = `${event.action_name} merge request`;
         details.mergeRequestId = event.target_iid;
         details.mergeRequestTitle = event.target_title;
+        details.mergeRequestWebUrl = (
+          await getMergeRequest(context, {
+            projectId: event.project_id,
+            mergeRequestId: details.mergeRequestId,
+          })
+        ).webUrl;
       } else if (
         event.action_name === "commented on" &&
         event.target_type === "DiffNote"
       ) {
         action = "commented on";
-        details.mergeRequestId = event.target_iid;
+        if (event.noteable_iid) {
+          details.mergeRequestId = event.noteable_iid;
+        } else {
+          const [mergeRequest] = await getMergeRequests(context, {
+            projectId: event.project_id,
+            search: event.target_title,
+            sort: "asc",
+          });
+          if (mergeRequest) {
+            details.mergeRequestId = mergeRequest.id;
+          }
+        }
         details.mergeRequestTitle = event.target_title;
+        details.mergeRequestWebUrl = (
+          await getMergeRequest(context, {
+            projectId: event.project_id,
+            mergeRequestId: details.mergeRequestId,
+          })
+        ).webUrl;
         details.noteId = event.note.id;
         details.noteBody = event.note.body;
-        details.noteableId = event.note.noteable_id;
         details.noteableIId = event.note.noteable_iid;
         details.path = event.note.position.new_path;
 
