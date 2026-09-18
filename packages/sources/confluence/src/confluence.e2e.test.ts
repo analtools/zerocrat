@@ -6,7 +6,7 @@ import type { ConfluenceApiContext } from "./types";
 
 describe("Confluence E2E", () => {
   const {
-    JIRA_HOST: jiraHost,
+    JIRA_HOST_1: jiraHost,
     CONFLUENCE_HOST: confluenceHost,
     CONFLUENCE_TOKEN: confluenceToken,
     CONFLUENCE_TEST_USERNAME: username,
