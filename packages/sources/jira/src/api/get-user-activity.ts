@@ -2,6 +2,7 @@ import type {
   JiraChangelogItem,
   JiraClientContext,
   JiraEvent,
+  JiraIssue,
   SmartSearchOptions,
 } from "../types";
 import { getChangelogByIssues } from "../utils";
@@ -94,9 +95,9 @@ export async function getUserActivity(
           username?: never;
           usernames?: string[];
         }
-    ),
+    ) & { issues?: JiraIssue[] },
 ) {
-  const issues = await smartSearch(context, options);
+  const issues = options.issues ?? (await smartSearch(context, options));
 
   const users =
     options.usernames ?? (options.username ? [options.username] : []);
