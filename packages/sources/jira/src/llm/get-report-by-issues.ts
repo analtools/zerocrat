@@ -2,7 +2,7 @@ import * as api from "../api";
 import type { JiraClientContext, JiraIssue } from "../types";
 import { buildIssueHierarchy } from "../utils";
 
-export async function getReportByIssues(
+export async function* getReportByIssues(
   context: JiraClientContext,
   options:
     | {
@@ -13,14 +13,12 @@ export async function getReportByIssues(
         keys?: never;
         issues: JiraIssue[];
       },
-): Promise<string> {
+): AsyncGenerator<string> {
   const issues =
     options.issues ?? (await api.smartSearch(context, { keys: options.keys }));
 
-  const result: string[] = [];
-
-  result.push(`## Issues`);
-  result.push(``);
+  yield `## Issues`;
+  yield ``;
 
   const hierarchy = buildIssueHierarchy(issues);
 
@@ -39,33 +37,31 @@ export async function getReportByIssues(
     initiativeClassification,
     changeType,
   } of hierarchy) {
-    result.push(`- task: ${key}. ${name}`);
+    yield `- task: ${key}. ${name}`;
     if (epic) {
-      result.push(`  epic: ${epic}`);
+      yield `  epic: ${epic}`;
     }
-    result.push(`  hierarchy: ${path}`);
-    result.push(`  depth: ${depth}`);
-    result.push(`  status: ${status}`);
-    result.push(`  type: ${type}`);
+    yield `  hierarchy: ${path}`;
+    yield `  depth: ${depth}`;
+    yield `  status: ${status}`;
+    yield `  type: ${type}`;
     if (initiativeClassification) {
-      result.push(`  initiativeClassification: ${initiativeClassification}`);
+      yield `  initiativeClassification: ${initiativeClassification}`;
     }
     if (changeType) {
-      result.push(`  changeType: ${changeType}`);
+      yield `  changeType: ${changeType}`;
     }
     if (assignee) {
-      result.push(`  assignee: ${assignee}`);
+      yield `  assignee: ${assignee}`;
     }
     if (dueDate) {
-      result.push(`  dueDate: ${JSON.stringify(dueDate)}`);
+      yield `  dueDate: ${JSON.stringify(dueDate)}`;
     }
     if (plannedEnd) {
-      result.push(`  plannedEnd: ${JSON.stringify(plannedEnd)}`);
+      yield `  plannedEnd: ${JSON.stringify(plannedEnd)}`;
     }
-    result.push(`  description: ${JSON.stringify(description)}`);
+    yield `  description: ${JSON.stringify(description)}`;
 
-    result.push(``);
+    yield ``;
   }
-
-  return result.join("\n").trim();
 }

@@ -3,6 +3,7 @@ import { formatDate } from "@analtools/zerocrat-source-utils";
 import * as api from "../api";
 import type {
   JiraClientContext,
+  JiraIssue,
   JiraIssueHierarchyItem,
   SmartSearchOptions,
 } from "../types";
@@ -14,11 +15,12 @@ import {
 } from "../utils";
 import { getReportByIssues } from "./get-report-by-issues";
 
-export async function getUserActivity(
+export async function* getUserActivity(
   context: JiraClientContext,
   options: SmartSearchOptions & {
     withChildren?: boolean;
     withParents?: boolean;
+    issues?: JiraIssue[];
   } & (
       | {
           username?: string;
@@ -29,10 +31,8 @@ export async function getUserActivity(
           usernames?: string[];
         }
     ),
-) {
-  const issues = await api.smartSearch(context, options);
-
-  const result: string[] = [];
+): AsyncGenerator<string> {
+  const issues = options.issues ?? (await api.smartSearch(context, options));
 
   const usernames = Array.from(
     new Set([
@@ -46,19 +46,16 @@ export async function getUserActivity(
     .join(",");
 
   const events = await api.getUserActivity(context, {
-    keys: issues.map((issue) => issue.key),
+    issues,
     usernames,
   });
 
-  result.push(
-    `# Jira Activity${displayUsernames ? ` - ${displayUsernames}` : ""} - ${options.fromDate ? `from ${formatDate(options.fromDate)} ` : ""}to ${formatDate(options.toDate ?? new Date())}`,
-  );
-  result.push(``);
+  yield `# Jira Activity${displayUsernames ? ` - ${displayUsernames}` : ""} - ${options.fromDate ? `from ${formatDate(options.fromDate)} ` : ""}to ${formatDate(options.toDate ?? new Date())}`;
 
-  result.push(
-    `JIRA_HOST = ${getPublicJiraHost(context.servers, context.publicHost)}`,
-  );
-  result.push(``);
+  yield ``;
+
+  yield `JIRA_HOST = ${getPublicJiraHost(context.servers, context.publicHost)}`;
+  yield ``;
 
   const issuesByEventsOriginal = deduplicateIssues(
     events.map((event) => event.issue),
@@ -80,7 +77,11 @@ export async function getUserActivity(
   }
   issuesByEvents = deduplicateIssues(issuesByEvents);
 
-  result.push(await getReportByIssues(context, { issues: issuesByEvents }));
+  for await (const item of getReportByIssues(context, {
+    issues: issuesByEvents,
+  })) {
+    yield item;
+  }
 
   const hierarchy = buildIssueHierarchy(issues);
   const hierarchyByKeys = new Map<string, JiraIssueHierarchyItem>();
@@ -88,33 +89,29 @@ export async function getUserActivity(
     hierarchyByKeys.set(hierarchyItem.key, hierarchyItem);
   }
 
-  result.push(``);
+  yield ``;
 
   if (!events.length) {
-    return "";
+    return;
   }
 
-  result.push(`## Events`);
-  result.push(``);
+  yield `## Events`;
+  yield ``;
 
   for (const event of events) {
-    result.push(`- task: ${event.issue.key}. ${event.issue.fields.summary}`);
-    result.push(`  username: ${event.username}`);
-    result.push(`  action: ${event.action}`);
+    yield `- task: ${event.issue.key}. ${event.issue.fields.summary}`;
+    yield `  username: ${event.username}`;
+    yield `  action: ${event.action}`;
     if (event.action === "Description updated") {
-      result.push(
-        `  diff: ${JSON.stringify(diffWordsPaired(event.from ?? "", event.to ?? ""))}`,
-      );
+      yield `  diff: ${JSON.stringify(diffWordsPaired(event.from ?? "", event.to ?? ""))}`;
     }
     if (event.from == null && event.to != null) {
-      result.push(`  value: ${event.to}`);
+      yield `  value: ${JSON.stringify(event.to)}`;
     } else {
-      result.push(`  from: ${JSON.stringify(event.from)}`);
-      result.push(`  to: ${JSON.stringify(event.to)}`);
+      yield `  from: ${JSON.stringify(event.from)}`;
+      yield `  to: ${JSON.stringify(event.to)}`;
     }
-    result.push(`  date: ${event.date.toISOString()}`);
-    result.push(``);
+    yield `  date: ${event.date.toISOString()}`;
+    yield ``;
   }
-
-  return result.join("\n").trim();
 }
