@@ -55,7 +55,10 @@ async function searchOnServer(
 
   while (true) {
     try {
-      const { issues } = await request<{ issues: JiraIssue[] }>({
+      const { issues, total } = await request<{
+        issues: JiraIssue[];
+        total: number;
+      }>({
         host: server.host,
         endpoint: "/rest/api/2/search",
         method: "get",
@@ -115,7 +118,7 @@ async function searchOnServer(
         result.push(issue);
       }
 
-      if (issues.length < maxResults) {
+      if (issues.length < maxResults || startAt > total || total === 0) {
         break;
       }
       startAt += maxResults;
