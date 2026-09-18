@@ -21,21 +21,21 @@ export function diffWordsPaired(oldText: string, newText: string): string {
   let j = 0;
 
   while (i < oldWords.length || j < newWords.length) {
-    if (oldWords[i] === newWords[j]) {
+    if (
+      i < oldWords.length &&
+      j < newWords.length &&
+      oldWords[i] === newWords[j]
+    ) {
       i++;
       j++;
       continue;
     }
 
-    const oldChunk = takeChunk(oldWords, i);
-    const newChunk = takeChunk(newWords, j);
+    const match = findBestMatch(oldWords, newWords, i, j);
 
-    const matchIndex = findBestMatch(oldWords, newWords, i, j);
-
-    // 🔁 если нашли пересечение → считаем заменой
-    if (matchIndex.found) {
-      const removedPart = oldWords.slice(i, matchIndex.oldIndex);
-      const addedPart = newWords.slice(j, matchIndex.newIndex);
+    if (match.found) {
+      const removedPart = oldWords.slice(i, match.oldIndex);
+      const addedPart = newWords.slice(j, match.newIndex);
 
       if (removedPart.length || addedPart.length) {
         changes.push({
@@ -44,21 +44,18 @@ export function diffWordsPaired(oldText: string, newText: string): string {
         });
       }
 
-      i = matchIndex.oldIndex;
-      j = matchIndex.newIndex;
+      i = match.oldIndex;
+      j = match.newIndex;
       continue;
     }
 
-    // иначе просто одиночные изменения
-    if (oldWords[i]) {
-      removed.push(format(oldChunk));
-      i += 1;
+    if (i < oldWords.length) {
+      removed.push(format(oldWords.slice(i)));
     }
-
-    if (newWords[j]) {
-      added.push(format(newChunk));
-      j += 1;
+    if (j < newWords.length) {
+      added.push(format(newWords.slice(j)));
     }
+    break;
   }
 
   return render({ changes, pureAdded: added, pureRemoved: removed });
@@ -67,11 +64,8 @@ export function diffWordsPaired(oldText: string, newText: string): string {
 /* ---------------- utils ---------------- */
 
 function tokenize(text: string): string[] {
-  return text.trim().split(/\s+/);
-}
-
-function takeChunk(arr: string[], index: number): string[] {
-  return arr.slice(index, index + 6);
+  const trimmed = text.trim();
+  return trimmed ? trimmed.split(/\s+/) : [];
 }
 
 function format(words: string[]): string {
@@ -80,29 +74,36 @@ function format(words: string[]): string {
   return `${words.slice(0, 2).join(" ")} ... ${words.slice(-2).join(" ")}`;
 }
 
-/**
- * пытаемся найти ближайшее совпадение (простая эвристика)
- */
 function findBestMatch(
   oldWords: string[],
   newWords: string[],
   i: number,
   j: number,
-) {
+): { found: boolean; oldIndex: number; newIndex: number } {
   const lookahead = 10;
 
-  for (let oi = i; oi < i + lookahead && oi < oldWords.length; oi++) {
-    for (let nj = j; nj < j + lookahead && nj < newWords.length; nj++) {
+  let best: { oldIndex: number; newIndex: number; dist: number } | null = null;
+
+  const oiMax = Math.min(i + lookahead, oldWords.length);
+  const njMax = Math.min(j + lookahead, newWords.length);
+
+  for (let oi = i; oi < oiMax; oi++) {
+    for (let nj = j; nj < njMax; nj++) {
       if (oldWords[oi] === newWords[nj]) {
-        return {
-          found: true,
-          oldIndex: oi,
-          newIndex: nj,
-        };
+        const dist = oi - i + (nj - j);
+
+        if (dist === 0) continue;
+
+        if (!best || dist < best.dist) {
+          best = { oldIndex: oi, newIndex: nj, dist };
+        }
       }
     }
   }
 
+  if (best) {
+    return { found: true, oldIndex: best.oldIndex, newIndex: best.newIndex };
+  }
   return { found: false, oldIndex: i, newIndex: j };
 }
 
