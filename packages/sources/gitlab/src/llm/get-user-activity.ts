@@ -46,7 +46,9 @@ export async function getUserActivity(
       `JIRA_HOST = ${jiraUtils.getPublicJiraHost(context.jiraServers ?? [], context.publicJiraHost)}`,
     );
     result.push(``);
-    result.push(await jiraClient.llm.getReportByIssues({ issues }));
+    for await (const item of jiraClient.llm.getReportByIssues({ issues })) {
+      result.push(item);
+    }
   }
 
   result.push(``);

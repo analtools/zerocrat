@@ -7,9 +7,11 @@ export async function getEpicField(
 ): Promise<string | null> {
   const customFields = await resolveCustomFields(context, server);
 
-  const [fieldId] = customFields
-    .entries()
-    .find(([, fieldName]) => fieldName === "Epic Link") ?? [null];
+  for (const [fieldId, fieldName] of customFields.entries()) {
+    if (fieldName === "Epic Link") {
+      return fieldId;
+    }
+  }
 
-  return fieldId;
+  return null;
 }

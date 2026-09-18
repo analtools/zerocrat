@@ -7,11 +7,11 @@ export async function getInitiativeClassificationField(
 ): Promise<string | null> {
   const customFields = await resolveCustomFields(context, server);
 
-  const [fieldId] = customFields
-    .entries()
-    .find(([, fieldName]) => fieldName === "Initiative classification") ?? [
-    null,
-  ];
+  for (const [fieldId, fieldName] of customFields.entries()) {
+    if (fieldName === "Initiative classification") {
+      return fieldId;
+    }
+  }
 
-  return fieldId;
+  return null;
 }

@@ -36,12 +36,12 @@ describe("Jira E2E", () => {
   });
 
   it("llm.getUserActivity", async () => {
-    const report = await client.llm.getUserActivity({
-      project,
-      username,
+    for await (const line of client.llm.getUserActivity({
+      actor: username,
       fromDate: prettyDate("current week"),
-    });
-    console.log(report);
+    })) {
+      console.log(line);
+    }
   });
 
   it("api.search", async () => {
@@ -52,8 +52,7 @@ describe("Jira E2E", () => {
 
   it("api.getUserActivity", async () => {
     const items = await client.api.getUserActivity({
-      project,
-      username,
+      actor: username,
       fromDate: prettyDate("current week"),
     });
     console.log(items.length);

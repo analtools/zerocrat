@@ -7,9 +7,11 @@ export async function getChangeTypeField(
 ): Promise<string | null> {
   const customFields = await resolveCustomFields(context, server);
 
-  const [fieldId] = customFields
-    .entries()
-    .find(([, fieldName]) => fieldName === "Тип изменения") ?? [null];
+  for (const [fieldId, fieldName] of customFields.entries()) {
+    if (fieldName === "Тип изменения") {
+      return fieldId;
+    }
+  }
 
-  return fieldId;
+  return null;
 }
