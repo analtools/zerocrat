@@ -166,6 +166,20 @@ export async function smartSearch(
 
   for (let i = 0; i < optionsQueue.length; i++) {
     const currentOptions = optionsQueue[i]!;
+    if (currentOptions.projects && currentOptions.projects.length > 1) {
+      const projectBatches = chunkArray(
+        Array.from(new Set(currentOptions.projects)),
+        1,
+      );
+      optionsQueue[i] = { ...currentOptions, projects: projectBatches[0] };
+      for (let j = 1; j < projectBatches.length; j++) {
+        optionsQueue.push({ ...currentOptions, projects: projectBatches[j] });
+      }
+    }
+  }
+
+  for (let i = 0; i < optionsQueue.length; i++) {
+    const currentOptions = optionsQueue[i]!;
     if (
       currentOptions.epicLinks &&
       currentOptions.epicLinks.length > BATCH_SIZE
