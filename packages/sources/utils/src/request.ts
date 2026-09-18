@@ -16,7 +16,7 @@ export async function request<T = any>(options: {
   arrayFormat?: IStringifyBaseOptions["arrayFormat"];
 }): Promise<T> {
   let url = `${options.host}${options.endpoint}`;
-  if (options?.searchParams) {
+  if (options?.searchParams && Object.keys(options.searchParams).length > 0) {
     url += `?${stringify(options.searchParams, { arrayFormat: options.arrayFormat ?? "brackets" })}`;
   }
 
@@ -36,7 +36,7 @@ export async function request<T = any>(options: {
     body instanceof FormData
       ? {}
       : {
-          "content-type": "application/json",
+          "Content-Type": "application/json",
         };
 
   const headers = new Headers({
