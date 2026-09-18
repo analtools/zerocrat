@@ -14,11 +14,11 @@ export async function getPlannedEndField(
 ): Promise<string | null> {
   const customFields = await resolveCustomFields(context, server);
 
-  const [fieldId] = customFields
-    .entries()
-    .find(([, fieldName]) => plannedEndFieldNames.includes(fieldName)) ?? [
-    null,
-  ];
+  for (const [fieldId, fieldName] of customFields.entries()) {
+    if (plannedEndFieldNames.includes(fieldName)) {
+      return fieldId;
+    }
+  }
 
-  return fieldId;
+  return null;
 }
